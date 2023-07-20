@@ -14,8 +14,8 @@ services:
     ports:
        - 27017:27017
     #network_mode: "host"
-#    networks:
-#       - ncs_net
+    networks:
+       - ncs_net
     command: mongod --auth -f /etc/mongod.conf
   flask-api:
     restart: always
