@@ -84,9 +84,11 @@ def updateOnlineTime(devid):
     if now.timestamp() - query_data['conn_time'] > 60 and status == "found":
         #print('裝置斷線中..')
         recordLog("device", devid, "offline")
-    elif status == "not":
+    #elif status == "not":
+    else:
         #print('裝置連線中..')
         recordLog("device", devid, "online")
+    
     # 更新連線 Timestamp
     newvalues = { "$set": { "conn_time": now.timestamp() } }
     mycol.update_one(query1, newvalues)
@@ -145,7 +147,6 @@ def processDeviceCMD(devid, ack):
         mydict = {
                    "datetime": date_time,
                    "role": "device",
-                   "name": devid,
                    "message": dev_name+" "+message
                  }
 
@@ -170,24 +171,24 @@ def recordLog(role, name, conditions):
     try:
         if role == "device":
             dev_name = getDeviceInfo(name, 'name') # 裝置名稱
-            
+
             if conditions == "online":
-                #print('online')
                 date_time = now.strftime("%Y-%m-%d %H:%M:%S")
-                msg = "裝置"+dev_name+"開始連線"
+                msg = "裝置"+dev_name+"連線中"
             else:
                 #print('offline')
+                print(name)
                 date_time = getlastOnlineTime(name)+timedelta(seconds=1)
-                #print(date_time)
                 msg = "裝置"+dev_name+"離線中"
-        
+            
+            print(date_time)
+            print(msg)
         ## Continued ...
         
         # 寫入Log紀錄
         mydict = {
                    "datetime": date_time,
                    "role": role,
-                   "id": name,
                    "message": msg
                  }
 
@@ -200,11 +201,11 @@ def recordLog(role, name, conditions):
 # param: 以字串方式傳輸"Device ID"
 def getDeviceOnlineStatus(devid):
     mycol = mydb["log"]
-    
-    query1 = {"id": devid}
-    sorted_data = mycol.find_one(query1, sort=[('datetime', -1)])
-    #query_data = next(sorted_data)
-    if "連線" in sorted_data['message']:
+
+    sorted_data = mycol.find().sort('datetime', -1)
+    query_data = next(sorted_data)
+
+    if "連線" in query_data['message']:
         return "found"
     else:
         return "not"
