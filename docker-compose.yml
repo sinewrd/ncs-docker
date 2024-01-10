@@ -13,7 +13,7 @@ services:
        - ./mongo/mongod.conf:/etc/mongod.conf
     ports:
        - 27017:27017
-    #network_mode: "host"
+#    network_mode: "host"
     networks:
        - ncs_net
     command: mongod --auth -f /etc/mongod.conf
@@ -26,11 +26,20 @@ services:
        - ./flask/app:/app
 #    ports:
 #       - 8090:5000
-    #network_mode: "host"
+#   network_mode: "host"
+    environment:
+       - MONGO_HOST=mongo
+       - MONGO_PORT=27017
+       - MONGO_DB=ncs
+       - MONGO_USERNAME=sinew
+       - MONGO_PASSWORD=sinew3612
+       - Threshold=30
+       - timer=15
     networks:
        - ncs_net
     depends_on:
        - mongo
+       - web-nginx
   web-nginx:
     restart: always
     build:
@@ -42,10 +51,19 @@ services:
     networks:
        - ncs_net
     depends_on:
-#       - mongo
-       - flask-api
+       - mongo
+  cron:
+    restart: always
+    build:
+       context: ./cron
+       dockerfile: Dockerfile    
+    networks:
+       - ncs_net
+    depends_on:
+       - mongo
 volumes:
   db:
 
 networks:
   ncs_net:
+   driver: bridge

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>EMS CONTROL</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="{{url_for('static', filename='vendor-content/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <!-- Custom styles for this template-->
+  <link href="{{url_for('static', filename='css/sb-admin-2.min.css')}}" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/ncs1.css')}}"> <!-- 自製 -->
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="javascript:void(0)">
+        <!--<div class="sidebar-brand-icon">
+          <i class='fas fa-chalkboard-teacher' style='font-size: 2rem;'></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">NCS Control Platform</div>-->
+        <div class="pt-2"><img src="{{url_for('static', filename='images/sinew_log.png')}}" class="title_img"></div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item">
+        <img src="{{url_for('static', filename='images/empty.png')}}" width="260">
+      </li>
+      <!-- Nav Item - 裝置管理 -->
+      <li class="nav-item">
+          <a href="/dashboard1"><img src="{{url_for('static', filename='images/2.Status/Status-450x100.png')}}" width="260"></a>
+      </li>
+      <li class="nav-item selectCategory">
+          <a href="/analysis"><img src="{{url_for('static', filename='images/3.Analysis/press-Analysis-450x100.png')}}" width="260"></a>
+      </li>
+      <li class="nav-item">
+          <a href="/log"><img src="{{url_for('static', filename='images/4.Log/Log-450x100.png')}}" width="260"></a>
+      </li>
+      <li class="nav-item">
+        <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-tog">
+          <img src="{{url_for('static', filename='images/5.Setting/Setting-450x100.png')}}" width="260" >
+        </a>
+        <div class="dropdown-menu" style="margin-left: 15%; margin-top: 0.4%;">
+          <a class="dropdown-item" href="/manage/account">User</a>
+          <a class="dropdown-item" href="/manage/zone">Zone</a>
+          <a class="dropdown-item" href="/manage/group">Group</a>
+          <a class="dropdown-item active" href="/register/device1">Device</a>
+          <a class="dropdown-item" href="/equipment1">Equipment</a>
+        </div>
+      </li>
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <!--<div id="content-wrapper" class="d-flex flex-column">-->
+    <div id="content-wrapper">
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar bg-light">
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+            <!-- Nav Item - Alerts -->
+            <li class="violet"> 
+               <span class="styletype"><!--Wednesdays, April 19 2023 16:50 PM-->{{data['nowTime']}}</span>
+            </li> 
+          </ul>
+        </nav>
+        <!-- End of Topbar -->
+        <!-- second Infomation -->
+        <div class="container-subItem bg-primary">
+          <div class="d-flex pt-2 pb-1">
+            <div class="mr-auto">&nbsp;</div>
+            <div class="h5 text-light pr-3"><a href="javascript:void(0)" data-toggle="modal" data-target="#logoutModal" class="logout">Logout</a></div>
+            <div class="h5 text-light pr-3">|</div>
+            <div class="h5 text-light pr-2"><i class="fa fa-globe" aria-hidden="true"></i></div>
+            <!-- Dropdown -->
+            <div class="dropdown">
+              <a href="#" role="button" data-toggle="dropdown">
+                <div class="h5 text-light pr-5"><i class="fa fa-bars" aria-hidden="true"></i></div>
+              </a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Eng</a>
+                <a class="dropdown-item" href="#">中文</a>
+                <a class="dropdown-item" href="#">한국어</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-9">
+                    <!-- Group List-->
+                    <div class="d-flex justify-content-start mb-3" style="border:#000000 0px solid;">
+                        <div class="p-3">Group:
+                        <select class="group-dev" onchange="statisticsgroup()">
+                                <!--<option value="non">All</option>-->
+                                {% for item in data['grouplist'] %}
+                                <option value="{{ item["index"] }}">{{ item["name"] }}</option>
+                                {% endfor %}
+                                <!--<option value="2">Group 2</option>
+                                <option value="3">Group 3</option>-->
+                        </select></div>
+                    </div>
+                    <!-- Device list -->
+                     <!-- 裝置列表 -->
+            <div class="col-12">
+               <div class="row">
+                <div class='col-xs-12 col-md-6'>
+                  <!--<div class='card mb-2 border-left-primary shadow'>-->
+                  <div class='card mb-2 cardconsumption shadow'>
+                    <div class='card-body'>
+                        <div class='text-primary text-danger text-center'>Daily power consumption</div>
+                        <div class="text-center pt-3 statistics-text"> <span class="daily_pw">0</span> kWh</div>
+                    </div>
+                  </div>
+                </div>
+                <div class='col-xs-12 col-md-6'>
+                    <div class='card mb-2 cardconsumption shadow'>
+                    <div class='card-body'>
+                        <div class='text-primary text-danger text-center'><!--Mothly power consumption-->Monthly power consumption</div>
+                        <div class="text-center pt-3 statistics-text"><span class="month_pw">0</span> kWh</div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+              <div class="row">
+                <div class='col-xs-12 col-md-6'>
+                  <!--<div class='card mb-2 border-left-primary shadow'>-->
+                  <div class='card mb-2 cardconsumption shadow'>
+                    <div class='card-body'>
+                        <div class='text-primary text-success text-center'>Daily usage time</div>
+                        <div class="text-center pt-3 statistics-text"> <span class="daily_usage">0</span> hours</div>
+                    </div>
+                  </div>
+                </div>
+                <div class='col-xs-12 col-md-6'>
+                    <div class='card mb-2 cardconsumption shadow'>
+                    <div class='card-body'>
+                        <div class='text-primary text-success text-center'><!--Mothly usage time-->Monthly usage time</div>
+                        <div class="text-center pt-3 statistics-text"><span class="month_usage">0</span> hours</div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+                <!-- 圖表 -->
+              <!-- Total Row -->
+              <div class="row">
+                <div class="col-12">
+                    <table class="table borderless">
+                              <tr>
+                                  <td width="22%">
+                                    <span class="group-dev-title">Power consumption</span>
+                                  </td>
+                                  <td align="left">
+                                    <hr size="3" align="center" noshade width="100%" color="AAABD3">
+                                  </td>
+                              </tr>
+                    </table>
+                </div>
+              </div>
+                   <!-- <table class="table borderless">
+                      <tr>
+                            <td colspan="3" class="statistics-dev">Total: <span class="total">{{data['total']}}</span>, register: <span class="register">{{data['reg']}}</span>, unregister: <span class="unregister">{{data['unreg']}}</span></td>
+                            <td colspan="1" align="right">
+                              <img src="{{url_for('static', filename='images/10.Other/normal_L-32x32.png')}}" width="25" class="dev_left">
+                              <img src="{{url_for('static', filename='images/10.Other/normal_R-32x32.png')}}" width="25" class="dev_right">
+                            </td>
+                      </tr>
+                    </table>-->
+              </div>
+              <div class="row">
+                  <!-- 圖表 -->
+                  <div class="col-12">
+                      <canvas id="barChart" height="400vh"></canvas>
+                  </div>
+              </div>
+
+                </div>
+                <!-- 區域 -->
+                <div class="col-3">
+                   <!-- zone-->
+                    <!-- 標題 -->
+                    <!-- Group List-->
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table borderless">
+                              <tr>
+                                  <td width="10%">
+                                    <span class="group-dev-title">Zone</span>
+                                  </td>
+                                  <td align="left">
+                                    <hr size="3" align="center" noshade width="100%" color="AAABD3">
+                                  </td>
+                              </tr>
+                            </table>
+                            <!-- Zone -->
+                            <table class="table borderless zone"></table>
+                            <!-- 底部 -->
+                            <!-- Total Row -->
+                              <!--<div class="d-flex justify-content-end mb-3 pr-3" style="border:#000000 0px solid;">-->
+                              <div class="d-flex justify-content-between mb-3" style="border:#000000 0px solid;">
+                                    <a href="/analysis" class="homeicon"><span class="pt-5 pl-3"><i class="fa fa-home" aria-hidden="true" style="font-size: 1.2rem;"></i></span></a>
+                                    <div><img src="{{url_for('static', filename='images/10.Other/normal_L-32x32.png')}}" width="25" class="zone_left">
+                                        <img src="{{url_for('static', filename='images/10.Other/normal_R-32x32.png')}}" width="25" class="zone_right"></div>
+                                    <!--<input type="hidden" id="zoneId" value="0">-->
+                              </div>
+                            <!--
+                    <table class="table borderless">
+                      <tr>
+                            <td align="right">
+                                <a href="/register/device1"><span class="pt-5"><i class="fa fa-home" aria-hidden="true" style="font-size: 1.2rem;"></i></span></a>
+                                <img src="{{url_for('static', filename='images/10.Other/normal_L-32x32.png')}}" width="25" class="zone_left">
+                                <img src="{{url_for('static', filename='images/10.Other/normal_R-32x32.png')}}" width="25" class="zone_right">
+                            </td>
+                      </tr>
+                    </table>
+                            -->
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+        <!--
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+          </div>
+        </div>
+      </footer> -->
+
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header login100-form-title text-white">
+          <h5 class="modal-title" id="exampleModalLabel"><!--Ready to Leave?-->Log out</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body"><!--Select "Logout" below if you are ready to end your current session.-->Confirm to logout?</div>
+        <div class="modal-footer">
+          <button type='button' class='btn login100-form-title text-white' onClick="logOut()"><!--Logout-->OK</button>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
+          <!--<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a>-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal-->
+  <div class="modal fade" id="showModal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header login100-form-title text-white">
+          <h5 class="modal-title" id="ModalLabel"><!--Ready to Leave?--></h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body body-content">
+            <!--Select "Logout" below if you are ready to end your current session.-->
+        </div>
+        <div class="modal-footer footer-content">
+         <!-- <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a> -->
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Bootstrap core JavaScript-->
+<script src="{{url_for('static', filename='vendor-content/jquery/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='vendor-content/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{{url_for('static', filename='vendor-content/jquery-easing/jquery.easing.min.js')}}"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="{{url_for('static', filename='js/sb-admin-2.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/ncs1.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+<!-- Page level plugins -->
+<!--
+<script src="vendor-content/chart.js/Chart.min.js"></script>
+<script src="js/demo/chart-area-demo-1.js"></script> -->
+<!-- Page level custom scripts -->
+<!--<script src="js/demo/chart-area-demo.js"></script>
+<script src="js/demo/chart-pie-demo.js"></script>-->
+<script>
+var zone_id ={{data['zone']}}; //Zone ID
+//console.log(zone_id);
+var group_id ={{data['group']}}; //Group ID
+//console.log(group_id);
+var zonedata;    //區域變數
+var col = 6;     //一列個數
+var zonecol = 2;  //一列個數
+var nowPageZone =1;
+
+var data;        //Device 裝置資訊
+var total_zone =0; //初始總數
+var nowPage = 1;
+var today = getNowToday();// 今日日期
+//console.log(today)
+var get_first_last = getThisMonthfirstlast();  //取出第一天和最後一天
+var ndate = getCurrentTime();   //返回幾年幾月
+var days = getDuration(ndate);  //查看這個月有多少天
+var newArrDate = new Array();   //放置日期
+var newArrCount = new Array();  //放置每日總值
+var myChartBar; //圖表
+
+//圖表
+var dataBar = {
+    //labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],   //變數日期
+    labels: newArrDate,   //變數日期
+    datasets: [{
+      label: "Power consumption",
+      backgroundColor: "rgba(255, 206, 147,0.5)",
+      borderColor: "rgba(255, 206, 147,1)",
+      borderWidth: 2,
+      hoverBackgroundColor: "rgba(252, 157, 155,0.4)",
+      hoverBorderColor: "rgba(252, 157, 155,1)",
+      data: newArrCount                       //變數總電量
+        //data: [65, 59, 20, 81, 56, 55, 40],                       //變數總電量
+    }]
+};
+var optionsBar = {
+        maintainAspectRatio: false,
+        responsive: true,
+        title: {
+                display: false,  //Title 隱藏
+                //text: '即時用電趨勢-設備1'
+               },
+        legend: {
+                 display: false
+                },
+        scales: {
+              yAxes: [{
+                  stacked: true,
+                  gridLines: {
+                    display: true,
+                    color: "rgba(102, 102, 102,0.2)"
+                  },
+                  ticks: {
+                            min: 0,
+                            display: true,
+                            callback: function(value, index, values) {
+                              return value+" kWh";
+                            }
+                         }
+              }],
+        xAxes: [{
+                // y 軸格線
+                gridLines: {
+                  display: true
+                }
+              }]
+        }
+    };
+var ctxBar = document.getElementById("barChart").getContext('2d');
+myChartBar = new Chart(ctxBar, {type: 'bar', data: dataBar, options: optionsBar}); //chart 設全域變數
+
+window.onload = function (){
+    //$('.dropdown-tog').dropdown('toggle');
+    //查詢裝置清單
+    getAnalysisDataPromse(zone_id, group_id, today, get_first_last[0], today)
+    .then(function(obj_data) {
+        //console.log(obj_data);
+        //顯示畫面
+        if(zone_id ==0 && group_id ==0){
+            showDataChart1(obj_data);
+        }
+        else{
+            showDataChart(obj_data, days);
+        }
+    });
+    //區域分頁
+    initZoneData(0)
+    .then(function(obj_data) {
+        //console.log(obj_data);
+        //顯示畫面
+        paginationZone(obj_data['group'], nowPageZone, 'analysis');
+    });
+    /*
+    .then(function() {
+        //console.log(zone_id);
+        switchZone(zone_id);
+    });
+    */
+}
+</script>
+</body>
+
+</html>

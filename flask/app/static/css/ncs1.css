@@ -1,0 +1,378 @@
+/* web1 專案使用 */
+body{
+  /*overflow:hidden!important;*/ /* scroll hide */
+}
+
+/* offline state */
+.dot_off {
+  height: 20px;
+  width: 20px;
+  background-color: #696969;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* online state */
+.dot_on {
+  height: 20px;
+  width: 20px;
+  background-color: #42e360;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Button Group width the same */
+.equal-width-buttons {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.equal-width-buttons .btn {
+  flex: 1;
+  margin: 5px; /* 可选，用于添加按钮之间的间距 */
+}
+
+/* 登入頁面 */
+.login100-form-title{
+    background-color: #2e363e!important;
+}
+
+.login100-form-title-1{
+    background-color: #4b5861!important;
+}
+
+.login100-form-btn{
+    background-color: #2e363e!important;
+}
+
+.login100-form-btn:hover {
+    background-color: #47525D!important;
+}
+
+.bg-gradient-primary{
+    background-color: #2e363e!important;
+    background-image:linear-gradient(180deg,#2e363e 10%,#224abe 100%)!important;
+    background-size:cover!important;
+}
+
+.bg-primary{background-color:#2e363e!important}
+.bg-primary-bottom{background-color:#2e363e!important}
+a.bg-primary:focus,a.bg-primary:hover,.bg-primary:focus,button.bg-primary:hover{
+    background-color: #2e363e!important;
+}
+
+.violet{
+  color: #674DBA;
+}
+
+.violet .styletype{
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+}
+
+.sizestyle{
+  font-size: 1rem!important;
+}
+/*
+.navbar-nav{
+  height: 950px!important;
+}
+*/
+
+
+.container-fluid {
+ /* height: 850px!important; */
+  display:inline-block!important;
+}
+
+.container-subItem{
+  width: 100%!important;
+}
+
+/* 左邊的content */
+.page-content{
+  border:#0000FF 0px solid;
+/*  width: 72%; */
+ /* height: 810px!important; */
+}
+
+/*.page-content .section, .side-doc-outline--content .section{ */
+.side-doc-outline--content .section{
+  /*background-color: #cccccc;*/
+}
+
+
+/* 右邊的content */
+.side-doc-outline--content{
+  border:green 0px solid;
+  width: 25%;
+}
+
+/* statistics Info */
+.statistics-dev{
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  color: #898989;
+}
+
+.borderless th, .borderless td{
+  border: none;
+}
+
+
+.group-dev{
+  margin-left: 10px;
+  width: 150px;
+  border-color: #B5B5B6;
+}
+
+.group-dev-title{
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  color: #434D54;
+}
+
+
+.horizontal-line {
+    /* padding-bottom: 20px;
+    border-bottom: 3px solid #AAABD3; */
+    width: 50%;
+    height: 3px;
+    border-top: solid #AAABD3; 
+}
+
+.div1, .div2{
+    display: inline-block;
+    border:green 0px solid;
+}
+
+.container {
+  position: relative;
+  border:#0000FF 0px solid;
+  display: inline-block; /* Optional: Keeps the container size to fit content */
+}
+
+.container .image{
+  border:#0000FF 0px solid;
+}
+
+.container .text {
+  position: absolute;
+  border:#0000FF 0px solid;
+  top: 0.5vw; /* Adjust to position the text vertically */
+  /*text-align: center;*/
+  padding-left: 0.8vw;
+ /* left: 27%; */ /* Adjust to position the text horizontally */
+ /* transform: translate(-50%, -50%); */ /* Center the text */
+ /* background-color: rgba(0, 0, 0, 0.5); *//* Optional: Add a background color with transparency */
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9vw;
+  /* font-size: 16px; */
+  color: #A0CE4E; /* Optional: Set the text color */
+ /* padding: 0px; */ /* Optional: Add padding for better readability */
+  z-index: 1; /* Place the text above the image */
+  width: 82%;
+  word-break: break-all;
+}
+
+.container .text_1 {
+  position: absolute;
+  border:#0000FF 0px solid;
+  top: 0.5vw; /* Adjust to position the text vertically */
+  /*text-align: center;*/
+  padding-left: 0.8vw;
+ /* left: 27%; */ /* Adjust to position the text horizontally */
+ /* transform: translate(-50%, -50%); */ /* Center the text */
+ /* background-color: rgba(0, 0, 0, 0.5); *//* Optional: Add a background color with transparency */
+  font-family: 'Montserrat', sans-serif;
+ /* font-size: 16px; */
+  font-size: 0.9vw;
+  color: #999; /* Optional: Set the text color */
+ /* padding: 0px; */ /* Optional: Add padding for better readability */
+  z-index: 1; /* Place the text above the image */
+  width: 82%;
+  word-break: break-all;
+}
+
+
+.btn1{
+  border:#dddcdc 0px solid;
+  background-color: #dddcdc;
+}
+
+.container1 {
+  position: relative;
+  border:#0000FF 0px solid;
+  display: inline-block; /* Optional: Keeps the container size to fit content */
+}
+
+.container1 .image{
+  border:#0000FF 0px solid;
+}
+
+.container1 .text0, .container1 .text1, .container1 .text2, .container1 .text3, .container1 .text4, .container1 .text5 {
+  position: absolute;
+  border:#0000FF 0px solid;
+  bottom: 0.8vh; /* Adjust to position the text vertically */
+  text-align: center; /* 将文本置中 */
+ /* transform: translate(-50%, -50%); */ /* Center the text */
+ /* background-color: rgba(0, 0, 0, 0.5); *//* Optional: Add a background color with transparency */
+  font-family: 'Montserrat', sans-serif;
+  /* font-size: 18px;*/
+  font-size: 1vw;
+  color: #434d54; /* Optional: Set the text color */
+ /* padding: 0px; */ /* Optional: Add padding for better readability */
+  z-index: 1; /* Place the text above the image */
+  width: 100%;
+}
+
+.container1 .text_content{
+    position: absolute;
+      border:#0000FF 0px solid;
+      bottom: 15%; /* Adjust to position the text vertically */
+      text-align: center; /* 将文本置中 */
+     /* transform: translate(-50%, -50%); */ /* Center the text */
+     /* background-color: rgba(0, 0, 0, 0.5); *//* Optional: Add a background color with transparency */
+      font-family: 'Montserrat', sans-serif;
+      font-size: 18px;
+      color: #434d54; /* Optional: Set the text color */
+     /* padding: 0px; */ /* Optional: Add padding for better readability */
+      z-index: 1; /* Place the text above the image */
+      width: 100%;
+}
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 25px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 10px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #d281cc;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #d281cc;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(28px);
+  -ms-transform: translateX(28px);
+  transform: translateX(28px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 60%;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+  background-color: #009dcd!important;
+}
+
+.logout{
+    color: white;
+}
+
+.logout:hover {
+    color: white;
+    text-decoration: none;
+}
+
+.fixed-width {
+    width: 0px; /* 您可以更改此值為您想要的固定寬度 */
+}
+
+.showdevtable{
+    border:#B5B5B6 1px solid;
+}
+
+.dev_left, .dev_right, .zone_left, .zone_right{
+    cursor: pointer;
+}
+
+.btn-pw-on{
+  background-color: #A0CE4E;
+  color: white;
+  border:#A0CE4E 1px solid;
+}
+
+.btn-pw-off{
+  background-color: #858796;
+  color: white;
+  border:#858796 1px solid;
+}
+
+.homeicon:link{
+    color: #898989;
+    text-decoration:none;
+}
+
+
+.sidebar{
+    width: 20rem!important;
+}
+
+.title_img{
+    /*
+    width: 20rem!important;
+    height: 5rem;
+    */
+}
+
+.selectCategory{
+    background-color: #009dcd;
+}
+
+.cardconsumption{
+    background-color: #F3F2F5;
+    border:#C3C4DF 1px solid;
+}
+
+.statistics-text{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    color: #434d54; /* Optional: Set the text color */
+}
+
+/*
+.page-top{
+    background-color: #2E363E;
+}
+*/

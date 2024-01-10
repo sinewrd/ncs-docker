@@ -1,0 +1,4 @@
+@reboot root /cron/exec3.sh >>/cron/initdb.log 2>&1
+* * * * * root /cron/exec.sh >>/cron/cron.log 2>&1
+0 0 * * * root /cron/exec1.sh >>/cron/cron1.log 2>&1
+@weekly root /cron/exec2.sh >>/cron/cron2.log 2>&1

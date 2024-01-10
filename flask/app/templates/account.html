@@ -1,0 +1,404 @@
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>EMS CONTROL</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="{{url_for('static', filename='vendor-content/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <!-- Custom styles for this template-->
+  <link href="{{url_for('static', filename='css/sb-admin-2.min.css')}}" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/ncs1.css')}}"> <!-- 自製 -->
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="javascript:void(0)">
+        <!--<div class="sidebar-brand-icon">
+          <i class='fas fa-chalkboard-teacher' style='font-size: 2rem;'></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">NCS Control Platform</div>-->
+        <div class="pt-2"><img src="{{url_for('static', filename='images/sinew_log.png')}}" class="title_img"></div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item">
+        <img src="{{url_for('static', filename='images/empty.png')}}" width="260">
+      </li>
+      <!-- Nav Item - 裝置管理 -->
+      <li class="nav-item">
+        <a href="/dashboard1"><img src="{{url_for('static', filename='images/2.Status/Status-450x100.png')}}" width="260"></a>
+      </li>
+      <li class="nav-item">
+        <a href="/analysis"><img src="{{url_for('static', filename='images/3.Analysis/Analysis-450x100.png')}}" width="260"></a>
+      </li>
+      <li class="nav-item">
+        <a href="/log"><img src="{{url_for('static', filename='images/4.Log/Log-450x100.png')}}" width="260"></a>
+      </li>
+      <li class="nav-item">
+        <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-tog">
+          <img src="{{url_for('static', filename='images/5.Setting/Setting-450x100.png')}}" width="260" >
+        </a>
+        <div class="dropdown-menu" style="margin-left: 15%; margin-top: 0.4%;">
+          <a class="dropdown-item active" href="/manage/account">User</a>
+          <a class="dropdown-item" href="/manage/zone">Zone</a>
+          <a class="dropdown-item" href="/manage/group">Group</a>
+          <a class="dropdown-item" href="/register/device1">Device</a>
+          <a class="dropdown-item" href="/equipment1">Equipment</a>
+        </div>
+      </li>
+    </ul>
+
+    <!-- End of Sidebar -->
+    <!-- Content Wrapper -->
+    <!--<div id="content-wrapper" class="d-flex flex-column">-->
+    <div id="content-wrapper">
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar bg-light">
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+            <!-- Nav Item - Alerts -->
+            <li class="violet">
+               <span class="styletype"><!--Wednesdays, April 19 2023 16:50 PM-->{{data['nowTime']}}</span>
+            </li>
+          </ul>
+        </nav>
+        <!-- End of Topbar -->
+        <!-- second Infomation -->
+        <div class="container-subItem bg-primary">
+          <div class="d-flex pt-2 pb-1">
+            <div class="mr-auto">&nbsp;</div>
+            <div class="h5 text-light pr-3"><a href="javascript:void(0)" data-toggle="modal" data-target="#logoutModal" class="logout">Log Out</a></div>
+            <div class="h5 text-light pr-3">|</div>
+            <div class="h5 text-light pr-2"><i class="fa fa-globe" aria-hidden="true"></i></div>
+            <!-- Dropdown -->
+            <div class="dropdown">
+              <a href="#" role="button" data-toggle="dropdown">
+                <div class="h5 text-light pr-5"><i class="fa fa-bars" aria-hidden="true"></i></div>
+              </a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Eng</a>
+                <a class="dropdown-item" href="#">中文</a>
+                <a class="dropdown-item" href="#">한국어</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Begin Page Content -->
+
+        <div class="container-fluid">
+          <!-- Create Row -->
+          <!--<div class="d-flex justify-content-center">
+            <div class="container" style="border:#0000FF 1px solid;">
+              <div class="row justify-content-end">
+                <!-- 內容 -->
+               <!-- <div class="col-12" style="border:#000000 0px solid;">
+                        <button type="button" class="btn btn-secondary login100-form-title text-white" onClick="setModelType('account')"><!--Append--><!--Add</button>
+                </div>
+              </div>
+            </div>
+          </div>-->
+          <!--<div class="d-flex justify-content-end">
+            <div class="row">
+              <div class="col-12 py-3">
+                  <button type="button" class="btn btn-secondary login100-form-title text-white" onClick="setModelType('account')"><!--Append--><!--Add</button>
+              </div>
+            </div>
+          </div> -->
+          <!-- Equepment List Row -->
+          <div class="d-flex justify-content-center">
+          <!--<div class="container">-->
+          <div class="container" style="border:#0000FF 0px solid;">
+            <div class="row justify-content-center">
+              <div class="col-7" style="border:#000000 0px solid;">
+                <!-- Botton -->
+                  <div class="d-flex justify-content-between" style="border:#FF0000 0px solid;">
+                    <div class="row">
+                      <form class="form-inline pl-4">
+                          <label class="my-1" for="account">Name</label>
+                          <input type='text' class='form-control mx-3' id="account">
+                          <button type="button" class="btn btn-secondary login100-form-title text-white mr-2" onClick="searchUserName()">Search</button>
+                          <!--<select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" onClick="filterLog()">
+                            <option value="0" selected>All</option>
+                            <option value="1">User Login Status</option>
+                            <option value="2">Device Manage</option>
+                            <option value="3">Equipment Switch</option>
+                          </select>-->
+                          <!--<span style="color:#ff0000">(The history is kept for three months)</span>-->
+                      </form>
+                    </div>
+
+                    <div class="row">
+                      <div class="col py-3 pr-4">
+                        <button type="button" class="btn btn-secondary login100-form-title text-white" onClick="setModelType('account')"><!--Append-->New</button>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              <!-- 內容 -->
+              <div class="col-7" style="border:#000000 0px solid;">
+                  <!-- 內容 -->
+                  <div class="card shadow mb-3">
+                  <!-- Card Header - Dropdown -->
+                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between login100-form-title-1 text-white">
+                    <h6 class="m-0"><!--Revenue Sources-->User List</h6>
+                  </div>
+                  <!-- Card Body -->
+                  <div class="card-body showcontent"> <!-- 加入有scall bar功能。 addScroll -->
+                  <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="thead-light">
+                          <tr>
+                             <!-- <th scope="col">
+                                <div class='custom-control custom-checkbox'>
+                                  <input class='form-check-input checkAll' type='checkbox' onclick="selectAllcheck()">
+                                </div>
+                              </th>-->
+                              <!--<th scope="col" width="5%">Index</th>-->
+                              <th scope="col" >Name</th>
+                              <th scope="col" >Password</th>
+                              <!--<th scope="col" >Name</th>-->
+                              <th scope="col"></th>
+                          </tr>
+                        </thead>
+                        <tbody id="accountlist">
+                        <!--
+                          <tr>
+                              <td class="align-middle">1</td>
+                              <td class="align-middle">LG</td>
+                              <td class="align-middle">42LD520</td>
+                              <td class="align-middle">
+                                9600
+                              </td>
+                              <td class="align-middle">8N1</td>
+
+                              <td class="align-middle">
+                                On: 6B 61 20 30 31 20 31 0D<br>
+                                Off: 6B 61 20 30 20 30 30 0D
+                              </td>
+                              <td class="align-middle">
+                                On-ok: 6B 61 20 30 31 20 31 0D<br>
+                                Off-ok: 6B 61 20 30 20 30 30 0D
+                              </td>
+                              <td>
+                                <button type="button" class="btn btn-success mr-2" onClick="">Update</button>
+                                <button type="button" class="btn btn-danger" onClick="confirmDelEquipment('1')">Delete</button>
+                              </td>
+                          </tr>
+                         -->
+                        </tbody>
+                    </table>
+                    </div>
+                  </div>
+
+              </div>
+              <!-- Total Row -->
+        <div class="d-flex justify-content-between mb-3" style="border:#000000 0px solid;">
+            <div class="statistics-dev"><a href="/manage/account" class="homeicon"><span class="pt-5 pl-3"><i class="fa fa-home" aria-hidden="true" style="font-size: 1.2rem;"></i></span></a></div>
+            <!--<div class="p-2 statistics-dev">Total: <span class="total">{{data['total']}}</span>, Total Page: <span class="total_page"></span>, Current Page: <span class="current_page"></span></div>-->
+            <!--<div class="p-2 bg-warning">Flex item 2</div>-->
+            <div class="p-2">
+                <img src="{{url_for('static', filename='images/10.Other/normal_L-32x32.png')}}" width="25" class="dev_left">
+                <img src="{{url_for('static', filename='images/10.Other/normal_R-32x32.png')}}" width="25" class="dev_right">
+            </div>
+        </div>
+
+            </div>
+        </div>
+
+
+        </div>
+      </div>
+          <!-- end of flex -->
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <!--<footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+
+          </div>
+        </div>
+      </footer>-->
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header login100-form-title text-white">
+          <h5 class="modal-title" id="exampleModalLabel"><!--Ready to Leave?-->Log out</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body"><!--Select "Logout" below if you are ready to end your current session.-->Confirm to logout?</div>
+        <div class="modal-footer">
+          <button type='button' class='btn login100-form-title text-white' onClick="logOut()"><!--Logout-->OK</button>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
+          <!--<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a>-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Confirm Modal-->
+  <div class="modal fade" id="showMsg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header login100-form-title text-white">
+          <h5 class="modal-title" id="ModalLabel"><!--Ready to Leave?--></h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body body-content">
+            <!--Select "Logout" below if you are ready to end your current session.-->
+        </div>
+        <div class="modal-footer footer-content"></div>
+      </div>
+    </div>
+  </div>
+<!-- Add Equipment Modal-->
+  <div class="modal fade" id="showForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header login100-form-title text-white">
+          <h5 class="modal-title" id="ModalLabel"><!--Ready to Leave?--></h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <!--Select "Logout" below if you are ready to end your current session.-->
+            <form>
+              <div class='row'>
+                <!-- Brand -->
+                <div class='col-12 form-group'>
+                  <label for='username'><small><!--Username-->Name * <!--(required field)--> </small></label>
+                  <input type='text' class='form-control' id='username' onChange='vaildUsername()' /> <!-- upd disabled -->
+                  <div class="vaildmsg" style="color:#ff0000;display:none;"><small>username is being used</small></div>
+                </div>
+              </div>
+              <!--
+              <div class='row'>
+                <div class='col-12 form-group'>
+                  <label for='name'><small>Name * <!--(required field)--><!-- </small></label>
+                  <input type='text' class='form-control' id='name' />
+                </div>
+              </div>
+              -->
+              <div class='row'>
+                <!-- Brand -->
+                <div class='col-12 form-group'>
+                  <label for='pwd'><small>Password * <!--(required field)--> </small></label>
+                  <input type='text' class='form-control' id='pwd' />
+                </div>
+              </div>
+            </form>
+        </div>
+        <div class="modal-footer footer-content">
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Bootstrap core JavaScript-->
+<script src="{{url_for('static', filename='vendor-content/jquery/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='vendor-content/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{{url_for('static', filename='vendor-content/jquery-easing/jquery.easing.min.js')}}"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="{{url_for('static', filename='js/sb-admin-2.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/ncs1.js')}}"></script>
+<!-- Page level plugins -->
+<!--
+<script src="vendor-content/chart.js/Chart.min.js"></script>
+<script src="js/demo/chart-area-demo-1.js"></script> -->
+<!-- Page level custom scripts -->
+<!--<script src="js/demo/chart-area-demo.js"></script>
+<script src="js/demo/chart-pie-demo.js"></script>-->
+<script>
+/*
+var zone_id ={{data['group']}}; //Zone ID
+console.log(zone_id);
+var zonedata;    //區域變數
+var col = 6;  //一列個數
+var zonecol = 2;  //一列個數
+var nowPageZone =2;
+*/
+var data;        //Device 裝置資訊
+var total_zone =0; //初始總數
+var nowPage = 1;
+var tempPage =1;   //暫存目前頁面
+var account = '';
+
+window.onload = function (){
+     $('.dropdown-tog').dropdown('toggle');
+
+    //查詢Account清單
+    initDatatPromse4('account')
+    .then(function(obj_data) {
+        //console.log(obj_data);
+        //obj_data = obj_data['group'].sort(function (a, b) { return a.Index < b.Index ? 1 : -1; });  //由高到低排序
+        //console.log(obj_data);
+        //顯示畫面
+        pagination(obj_data['account'], nowPage, 'account');
+    });
+/*
+    //區域分頁
+    initZoneData(0)
+    .then(function(obj_data) {
+        console.log(nowPageZone);
+        //顯示畫面
+        paginationZone(obj_data['group'], nowPageZone, 'device');
+    })
+    .then(function() {
+        //console.log(zone_id);
+        switchZone(zone_id);
+    });
+    */
+}
+</script>
+</body>
+
+</html>

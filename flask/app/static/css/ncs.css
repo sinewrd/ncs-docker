@@ -1,0 +1,48 @@
+/* offline state */
+.dot_off {
+  height: 20px;
+  width: 20px;
+  background-color: #696969;
+  border-radius: 50%;
+  display: inline-block;
+}
+/* online state */
+.dot_on {
+  height: 20px;
+  width: 20px;
+  background-color: #42e360;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Button Group width the same */
+.equal-width-buttons {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.equal-width-buttons .btn {
+  flex: 1;
+  margin: 5px; /* 可选，用于添加按钮之间的间距 */
+}
+
+
+.border-left-primary  {
+    border-left:0.5rem solid #4e73df!important;
+}
+
+.border-left-info  {
+    border-left:0.5rem solid #36b9cc!important;
+}
+
+.border-left-warning{
+    border-left:0.5rem solid #f6c23e!important;
+}
+
+.border-left-danger{
+    border-left:0.5rem solid #e74a3b!important;
+}
+
+.border-left-success{
+    border-left:0.5rem solid #1cc88a!important;
+}

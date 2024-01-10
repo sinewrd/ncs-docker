@@ -2,7 +2,12 @@ FROM python:3.8
 
 WORKDIR /app
 
-RUN apt-get update 
+RUN apt-get update && \
+    apt-get install -y nano
+
+ENV TZ=Asia/Taipei
+
+#RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # RUN apt-get install -y libopencv-dev 
 

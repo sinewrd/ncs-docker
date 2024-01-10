@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>EMS CONTROL</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="{{url_for('static', filename='vendor-content/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <!-- Custom styles for this template-->
+  <link href="{{url_for('static', filename='css/sb-admin-2.min.css')}}" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/ncs1.css')}}"> <!-- 自製 -->
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="javascript:void(0)">
+        <!--<div class="sidebar-brand-icon">
+          <i class='fas fa-chalkboard-teacher' style='font-size: 2rem;'></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">NCS Control Platform</div>-->
+        <div class="pt-2"><img src="{{url_for('static', filename='images/sinew_log.png')}}" class="title_img"></div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item">
+        <img src="{{url_for('static', filename='images/empty.png')}}" width="260">
+      </li>
+      <!-- Nav Item - 裝置管理 -->
+      <li class="nav-item selectCategory">
+          <a href="/dashboard1"><img src="{{url_for('static', filename='images/2.Status/press-Status-450x100.png')}}" width="260"></a>
+      </li>
+      <li class="nav-item">
+          <a href="/analysis"><img src="{{url_for('static', filename='images/3.Analysis/Analysis-450x100.png')}}" width="260"></a>
+      </li>
+      <li class="nav-item">
+          <a href="/log"><img src="{{url_for('static', filename='images/4.Log/Log-450x100.png')}}" width="260"></a>
+      </li>
+      <li class="nav-item">
+        <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-tog">
+          <img src="{{url_for('static', filename='images/5.Setting/Setting-450x100.png')}}" width="260" >
+        </a>
+        <div class="dropdown-menu" style="margin-left: 15%; margin-top: 0.4%;">
+          <a class="dropdown-item" href="/manage/account">User</a>
+          <a class="dropdown-item" href="/manage/zone">Zone</a>
+          <a class="dropdown-item" href="/manage/group">Group</a>
+          <a class="dropdown-item" href="/register/device1">Device</a>
+          <a class="dropdown-item" href="/equipment1">Equipment</a>
+        </div>
+      </li>
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <!--<div id="content-wrapper" class="d-flex flex-column">-->
+    <div id="content-wrapper">
+        <!-- Nav Item - Alerts -->
+        <div class="alert alert-danger div_right_bottom" role="alert" style="display:none">
+          <!--This is a danger alert—check it out!-->The Network is offline
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar bg-light">
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+            <!-- Nav Item - Alerts -->
+            <li class="violet"> 
+               <!--<span class="styletype"{{data['nowTime']}}</span>--> <!-- {{data['userId']}} -->
+                <span class="styletype">{{data['nowTime']}}</span>
+            </li> 
+          </ul>
+        </nav>
+        <!-- End of Topbar -->
+        <!-- second Infomation -->
+        <div class="container-subItem bg-primary">
+          <div class="d-flex pt-2 pb-1">
+            <div class="mr-auto">&nbsp;</div>
+            <div class="h5 text-light pr-3"><a href="javascript:void(0)" data-toggle="modal" data-target="#logoutModal" class="logout">Log Out</a></div>
+            <div class="h5 text-light pr-3">|</div>
+            <div class="h5 text-light pr-2"><i class="fa fa-globe" aria-hidden="true"></i></div>
+            <!-- Dropdown -->
+            <div class="dropdown">
+              <a href="#" role="button" data-toggle="dropdown">
+                <div class="h5 text-light pr-5"><i class="fa fa-bars" aria-hidden="true"></i></div>
+              </a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Eng</a>
+                <a class="dropdown-item" href="#">中文</a>
+                <a class="dropdown-item" href="#">한국어</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Device status -->
+                <div class="col-9">
+                    <!-- Group 和控制項 -->
+                    <div class="d-flex justify-content-between mb-3" style="border:#000000 0px solid;">
+                        <div class="p-3">Group:
+                            <select class="group-dev" onchange="selectGroup('dashboard')">
+                                <option value="non">All</option>
+                                {% for item in data['grouplist'] %}
+                                <option value="{{ item["index"] }}">{{ item["name"] }}</option>
+                                {% endfor %}
+                                <!--<option value="2">Group 2</option>
+                                <option value="3">Group 3</option>-->
+                            </select>
+                        </div>
+                        <div class="p-3">
+                            <button type="button" class="mr-1 ml-1 btn-pw-on btneffects" onClick="confirmExec(event, 'on')">Power On</button>
+                            <button type="button" class="btn-pw-off mr-1 btneffects" onClick="confirmExec(event, 'off')">Power Off</button>
+                            <button type="button" class="px-3 btn-pw-on btneffects" onclick="selectAllcheck1()">All</button>
+                            <button type="button" class="btn-pw-off px-3 btneffects" onclick="selectAllcheck2()"><!--All-->Clear</button>
+                            <input type="hidden" id="userId" value="{{data['userId']}}"><!-- userId -->
+                        </div>
+                    </div>
+                    <!-- 裝置列表 -->
+                    <div class="col-12">
+                        <table>
+                             <tbody class="devlist">
+                             </tbody>
+                        </table>
+                        <!-- 底部 -->
+                          <!-- Total Row -->
+                          <div class="d-flex justify-content-between mb-3">
+                            <div class="p-2 statistics-dev">Total: <span class="total">{{data['total']}}</span>, Power On: <span class="pw_on">{{data['open']}}</span>, Stand-by: <span class="online">{{data['standby']}}</span>, Off-line: <span class="offline">{{data['disconn']}}</span> </div>
+                            <!--<div class="p-2 bg-warning">Flex item 2</div>-->
+                            <div class="p-2">
+                                <img src="{{url_for('static', filename='images/10.Other/normal_L-32x32.png')}}" width="25" class="dev_left">
+                                <img src="{{url_for('static', filename='images/10.Other/normal_R-32x32.png')}}" width="25" class="dev_right">
+                            </div>
+                          </div>
+                    </div>
+                </div>
+                <!-- 區域 -->
+                <div class="col-3">
+                        <!-- zone-->
+                         <div class="row">
+                        <div class="col-12">
+                            <table class="table borderless">
+                              <tr>
+                                  <td width="10%">
+                                    <span class="group-dev-title">Zone</span>
+                                  </td>
+                                  <td align="left">
+                                    <hr size="3" align="center" noshade width="100%" color="AAABD3">
+                                  </td>
+                              </tr>
+                            </table>
+                            <!-- Zone -->
+                            <table class="table borderless zone"></table>
+                            <!-- 底部 -->
+                            <!-- Total Row -->
+                              <div class="d-flex justify-content-between mb-3" style="border:#000000 0px solid;">
+                                    <a href="/dashboard1" class="homeicon"><span class="pt-5 pl-3"><i class="fa fa-home" aria-hidden="true" style="font-size: 1.2rem;"></i></span></a>
+                                    <div><img src="{{url_for('static', filename='images/10.Other/normal_L-32x32.png')}}" width="25" class="zone_left">
+                                    <img src="{{url_for('static', filename='images/10.Other/normal_R-32x32.png')}}" width="25" class="zone_right"></div>
+                              </div>
+                            <!--
+                    <table class="table borderless">
+                      <tr>
+                            <td align="right">
+                                <a href="/register/device1"><span class="pt-5"><i class="fa fa-home" aria-hidden="true" style="font-size: 1.2rem;"></i></span></a>
+                                <img src="{{url_for('static', filename='images/10.Other/normal_L-32x32.png')}}" width="25" class="zone_left">
+                                <img src="{{url_for('static', filename='images/10.Other/normal_R-32x32.png')}}" width="25" class="zone_right">
+                            </td>
+                      </tr>
+                    </table>
+                            -->
+                      </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+        <!--
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto bg-white">
+          <div class="copyright text-center my-auto">
+          </div>
+        </div>
+      </footer>
+        -->
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <!--
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>-->
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header login100-form-title text-white">
+          <h5 class="modal-title" id="exampleModalLabel"><!--Ready to Leave?-->Log out</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body"><!--Select "Logout" below if you are ready to end your current session.-->Confirm to logout?</div>
+        <div class="modal-footer">
+          <button type='button' class='btn login100-form-title text-white' onClick="logOut()"><!--Logout-->OK</button>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
+          <!--<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a>-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal-->
+  <div class="modal fade" id="showMsg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <!--<div class="modal-header login100-form-title bg-gradient-primary text-white">-->
+        <div class="modal-header login100-form-title text-white">
+          <h5 class="modal-title" id="ModalLabel"><!--Ready to Leave?--></h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body body-content">
+            <ul>
+            　    <li>Name: <span class="dev_name">Class 1</span> </li>
+                　<li>Status: <span class="dev_status">Online</span> </li>
+                　<li>Daily Power Consumption:<span class="dev_kwh"> 11 </span> kWh</li>
+                　<li>Zone: <span class="dev_zone"> Zone 1 </span></li>
+                　<li>Group: <span class="dev_group"> Group 1 </span></li>
+            </ul>
+            <!--Select "Logout" below if you are ready to end your current session.-->
+        </div>
+        <div class="modal-footer footer-content"></div>
+      </div>
+    </div>
+  </div>
+<!-- 批次處理 -->
+  <!-- Modal-->
+  <div class="modal fade" id="confirmMsg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header login100-form-title text-white">
+          <h5 class="modal-title execTitle"><!--Ready to Leave?-->Select device<!--Power ON--></h5>
+          <!--<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button> -->
+        </div>
+        <!-- body -->
+        <div class="modal-body">
+              <div id="onMsg" style="display: none;"><!--Confirm whether you want to open its.-->Confirm to Open it?</div>
+              <div id="offMsg" style="display: none;"><!--Confirm whether you want to close its.-->Confirm to Close it?</div>
+              <div id="alertMsg" style="display: none;">Please select target devices.</div>
+        </div>
+        <div class="modal-footer btn-footer1">
+            <button type="button" class="btn login100-form-title text-white" id="batchexec">OK</button>
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Bootstrap core JavaScript-->
+<script src="{{url_for('static', filename='vendor-content/jquery/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='vendor-content/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{{url_for('static', filename='vendor-content/jquery-easing/jquery.easing.min.js')}}"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="{{url_for('static', filename='js/sb-admin-2.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/ncs1.js')}}"></script>
+<!-- Page level plugins -->
+<!--
+<script src="vendor-content/chart.js/Chart.min.js"></script>
+<script src="js/demo/chart-area-demo-1.js"></script> -->
+<!-- Page level custom scripts -->
+<!--<script src="js/demo/chart-area-demo.js"></script>
+<script src="js/demo/chart-pie-demo.js"></script>-->
+<script>
+//console.log({{data['standby']}});
+var zone_id ={{data['group']}}; //Zone ID
+//console.log(zone_id);
+var data;        //Dashboard 裝置資訊
+var zonedata;    //區域變數
+
+var col =6;  //一列個數
+var total_zone =0; //初始總數
+var zonecol =2;  //一列個數
+
+var icon = ["<img src='/static/images/9.Device/power_on-183x119_new.png' class='image px-1' width='130%'>", "<img src='/static/images/9.Device/normal-183x119_new.png' class='image px-1' width='130%'>", "<img src='/static/images/9.Device/Off-line-183x119_new.png' class='image px-1' width='130%'>"];
+var nowPage =1;
+var nowPageZone =1;
+
+window.onload = function (){
+    //Get Raw Data
+    initDatatPromse3(zone_id, 'dashboard') //全域變數Data
+    .then(function(obj_data) {
+        //console.log(obj_data);
+        //顯示畫面
+        pagination(obj_data['dataset'], nowPage, 'dashboard');
+    });
+    //區域分頁
+    initZoneData(0)
+    .then(function(obj_data) {
+        //console.log(obj_data);
+        //顯示畫面
+        paginationZone(obj_data['group'], nowPageZone, 'dashboard');
+    });
+    /*
+    .then(function() {
+        //console.log(zone_id);
+        switchZone(zone_id);
+    });
+    */
+}
+
+//輪詢Dashboard
+const myInterval = setInterval(function() {upddeviceStatus1(zone_id)}, 5000);
+</script>
+</body>
+
+</html>
