@@ -401,6 +401,7 @@ def DashboardList(gid=None):
 # Dashboard頁面。外銷
 # 2023.09.12 新增Dashboard
 # 2023.12.07 更新。修改standby。
+# 2023.12.28 更新。修改group List。
 @app.route('/dashboard1', methods=['GET'])
 @app.route('/dashboard1/<int:zone_id>', methods=['GET'])
 @login_required
@@ -415,7 +416,8 @@ def DashboardList1(zone_id=None):
     # print(value)
     statistics = statisticsDevice1(value)  # 統計數量, 回傳值為字典型態
     # print(statistics)
-    group_list = getGroupList(0)  # 群組列表, 回傳值為字典型態
+    #group_list = getGroupList(0)  # 群組列表, 回傳值為字典型態
+    group_list = getGroupIDList('all')  # 群組列表, 回傳值為字典型態
     LocalTime = time.asctime(time.localtime(time.time()))
 
     item = {
@@ -505,6 +507,7 @@ def searchZoneDevice(gid=None, type=None):
 
 # device 頁面
 # 2023.09.22 新增
+"""
 @app.route('/register/device', methods=['GET'])
 @login_required
 def DeviceList():
@@ -515,10 +518,11 @@ def DeviceList():
         # "userId": user_id
     }
     return render_template('device.html', data=item)
-
+"""
 
 # Equipment 頁面
 # 2023.09.22 新增
+"""
 @app.route('/equipment', methods=['GET'])
 def EquipmentSet():
     group_list = getGroupList(0)  # 群組列表, 回傳值為字典型態
@@ -527,7 +531,7 @@ def EquipmentSet():
         # "userId": user_id
     }
     return render_template('equipment.html', data=item)
-
+"""
 
 # Equipment 頁面
 # 2023.10.31 新增
@@ -808,6 +812,7 @@ def delAccount(index):
 
 # 分析 analysis
 # 2023.11.08 新增
+# 2023.12.28 修改Group function 。取出ObjectID
 @app.route('/analysis', methods=['GET'])
 @app.route('/analysis/<int:zone>', methods=['GET'])
 @app.route('/analysis/<int:zone>/<int:group>', methods=['GET'])
@@ -823,7 +828,8 @@ def Analysis(zone=None, group=None):
     else:
         value1 = 0
 
-    group_list = getGroupList(0)  # 群組列表, 回傳值為字典型態
+    #group_list = getGroupList(0)  # 群組列表, 回傳值為字典型態
+    group_list = getGroupIDList("0")  # 群組列表, 回傳值為字典型態
     LocalTime = time.asctime(time.localtime(time.time()))
 
     item = {

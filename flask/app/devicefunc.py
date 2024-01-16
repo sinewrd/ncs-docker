@@ -673,6 +673,7 @@ def process(json_data, ip):
 # 2023.12.25 修改統計時數
 # 2023.12.30 新增統計時數。群組和Zone；修改統計
 # 2024.01.03 修改統計
+# 2024.01.15 修改
 def statisticsUsage1(devid, mode):
     # mycol = mydb["statistics_today_on_time"]
     mycol = mydb["statistics_device_day"]
@@ -713,18 +714,22 @@ def statisticsUsage1(devid, mode):
 
 # 統計Zone使用時數
 # 2023.12.30 新增。
+# 2024.01.15 修改
 # id: zone_id / group_id, 日期, 設備狀態, 設備開啟/關閉, zone/group
 def statisticsClassificationUsage1(id, today, equipment_status, mode, type):
     if type == "zone":
         mycol = mydb["statistics_zone_day"]
+        name = getZoneIDList(id)
     else:
         mycol = mydb["statistics_group_day"]
+        name = getGroupIDList(id)
 
     #today = datetime.date.today()
     myquery = {"id": id, "date": today}
     count = mycol.count_documents(myquery)
 
-    if count == 0 and id != "0":  # count 為0, 寫入第一筆資料
+    #if count == 0 and id != "0":  # count 為0, 寫入第一筆資料
+    if count == 0 and id != "0" and len(name['group']) != 0:  # count 為0, 寫入第一筆資料
         mydict = {
             'date': today,
             'id': id,
@@ -733,7 +738,7 @@ def statisticsClassificationUsage1(id, today, equipment_status, mode, type):
             'addwh': 0
         }
         mycol.insert_one(mydict)
-    elif count != 0 and id != "0":  # count 不為0
+    elif count != 0 and id != "0" and len(name['group']) != 0:  # count 不為0
         query_data = mycol.find_one(myquery)
 
         if mode == 'open' and equipment_status == 'on':
@@ -746,15 +751,29 @@ def statisticsClassificationUsage1(id, today, equipment_status, mode, type):
 # 統計Zone/Group 用電量
 # 2023.12.30 新增。
 # 2024.01.04 修改統計
+# 2024.01.15 修改
 def statisticsClassificationPw1(id, today, wh, type):
     if type == "zone":
         mycol = mydb["statistics_zone_day"]
+        name = getZoneIDList(id)
     else:
         mycol = mydb["statistics_group_day"]
+        name = getGroupIDList(id)
 
     #today = datetime.date.today()
-    if id != "0":
-        myquery = {"id": id, "date": today}
+
+    myquery = {"id": id, "date": today}
+    count = mycol.count_documents(myquery)
+    if count == 0 and id != "0" and len(name['group']) != 0:  # count 為0, 寫入第一筆資料
+        mydict = {
+            'date': today,
+            'id': id,
+            'usage': 0,
+            'start': 0,
+            'addwh': 0
+        }
+        mycol.insert_one(mydict)
+    elif count != 0 and id != "0" and len(name['group']) != 0:  # count 不為0
         query_data = mycol.find_one(myquery)
 
         total = query_data['addwh'] + wh
@@ -780,3 +799,61 @@ def getEquipmentStatus(devid):
         status = 'none'
 
     return status
+
+
+
+# 2023.12.26 修正。修改Index 值。修改取ObjectID
+# 2023.12.26 修正。字串格式
+# 2023.12.27 修正。字串格式
+# 2024.01.15 修改
+def getZoneIDList(gid):
+    mycol = mydb["zone"]
+    #print(gid)
+    if gid == "all" or gid == "0":
+        mydoc = mycol.find()
+    else:
+        objInstance = ObjectId(gid)
+        myquery = {"_id": objInstance}
+        #myquery = {"index": gid}
+        mydoc = mycol.find(myquery)
+
+    Data =[]
+    for x in mydoc:
+        objInstance1 = ObjectId(x['_id'])
+        item = {
+                 #'index': x['index'],
+                 'index': str(objInstance1),
+                 'zone': x['zone']
+               }
+        Data.append(item)
+
+    dataset = {'group': Data}
+    return dataset
+
+
+# 2023.12.26 修正。修改Index 值。修改取ObjectID
+# 2023.12.27 修正。修改gid 預設值
+# 2024.01.15 修改
+def getGroupIDList(gid):
+    mycol = mydb["group"]
+    #print(gid)
+    if gid == "all" or gid == "0":
+        mydoc = mycol.find()
+    else:
+        #myquery = {"index": gid}
+        objInstance = ObjectId(gid)
+        myquery = {"_id": objInstance}
+        mydoc = mycol.find(myquery)
+
+    Data =[]
+    for x in mydoc:
+        objInstance = ObjectId(x['_id'])
+        item = {
+                 #'index': x['index'],
+                 'index': str(objInstance),
+                 'name': x['name']
+               }
+        Data.append(item)
+
+    dataset = {'group': Data}
+    return dataset

@@ -73,6 +73,14 @@
     <!-- Content Wrapper -->
     <!--<div id="content-wrapper" class="d-flex flex-column">-->
     <div id="content-wrapper">
+        <!-- Nav Item - Alerts -->
+        <div class="alert alert-danger div_right_bottom" role="alert" style="display:none">
+          <!--This is a danger alert—check it out!-->The Network is offline
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
       <!-- Main Content -->
       <div id="content">
 
@@ -116,7 +124,8 @@
                     <div class="d-flex justify-content-start mb-3" style="border:#000000 0px solid;">
                         <div class="p-3">Group:
                         <select class="group-dev" onchange="statisticsgroup()">
-                                <!--<option value="non">All</option>-->
+                                <option value="unselect">--Select--</option>
+                                <option value="non">ALL</option>
                                 {% for item in data['grouplist'] %}
                                 <option value="{{ item["index"] }}">{{ item["name"] }}</option>
                                 {% endfor %}
@@ -429,6 +438,9 @@ window.onload = function (){
     });
     */
 }
+
+//輪詢監聽伺服器
+const myInterval = setInterval(function() {listenOnline()}, 5000);
 </script>
 </body>
 

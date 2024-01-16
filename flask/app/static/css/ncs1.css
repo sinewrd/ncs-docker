@@ -323,9 +323,11 @@ input:checked + .slider:before {
     border:#B5B5B6 1px solid;
 }
 
+/*
 .dev_left, .dev_right, .zone_left, .zone_right{
     cursor: pointer;
 }
+*/
 
 .btn-pw-on{
   background-color: #A0CE4E;

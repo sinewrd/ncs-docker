@@ -133,7 +133,7 @@ def SatisticsUsage(devid, start, end):
         item = {
             'date': x['date'],
             'id': x['id'],
-            'usage': x['usage'],
+            'usage': round(x['usage']/3600, 2),
             'addwh': round(x['addwh'] / 1000, 2)
         }
         Data.append(item)
@@ -369,22 +369,31 @@ def updateGroup(json_data, index):
 # 刪除Zone
 # param: 以整數方式傳輸"Index"索引值
 # 2023.08.21 新增
+# 2024.01.11 新增。刪除統計
 def deleteZone(index):
     mycol = mydb["zone"]
 
     myquery = {"index": index}
+    query_data = mycol.find_one(myquery)  # 取出Zone資訊
+    objInstance = ObjectId(query_data['_id'])
+    deleteAnalysisData(str(objInstance), 'zone')  # 刪除分析
+    # 刪除 Zone
     mycol.delete_one(myquery)
 
     return {"status": "ok"}
 
 
-# 刪除Zone
+# 刪除Group
 # param: 以整數方式傳輸"Index"索引值
 # 2023.08.21 新增
+# 2024.01.11 新增。修改統計
 def deleteGroup(index):
     mycol = mydb["group"]
 
     myquery = {"index": index}
+    query_data = mycol.find_one(myquery)  # 取出Zone資訊
+    objInstance = ObjectId(query_data['_id'])
+    deleteAnalysisData(str(objInstance), 'group')  # 刪除分析
     mycol.delete_one(myquery)
 
     return {"status": "ok"}
@@ -1520,6 +1529,7 @@ def mainCalculate(list_data, first, last, today):
 
 # 統計總量 - 以Zone區來計算
 # 2024.01.04 新增
+# 2024.01.11 新增所有群組的統計。前端下拉選項"All"選項
 def mainCalculateGroup(id, first, last, today, type):
     total_addwh = 0
     total_usage = 0
@@ -1528,12 +1538,15 @@ def mainCalculateGroup(id, first, last, today, type):
 
     if type == "zone":
         mycol = mydb["statistics_zone_day"]  # Zone
+        myquery = {"id": id, "date": {"$gte": first, "$lte": last}}
     elif type == "group":
         mycol = mydb["statistics_group_day"]  # Group
+        if id != "non":
+            myquery = {"id": id, "date": {"$gte": first, "$lte": last}}
+        else:
+            myquery = {"date": {"$gte": first, "$lte": last}}
     else:
         return False
-
-    myquery = {"id": id, "date": {"$gte": first, "$lte": last}}
 
     mydoc = mycol.find(myquery)
     count = mycol.count_documents(myquery)
@@ -1542,7 +1555,10 @@ def mainCalculateGroup(id, first, last, today, type):
         total_usage = sum(list(df['usage']))
         total_addwh = sum(list(df['addwh']))
     # 以下計算今日
-    myquery1 = {"id": id, "date": today}
+    if id != "non":
+        myquery1 = {"id": id, "date": today}
+    else:
+        myquery1 = {"date": today}
     #myquery1 = {"id": zone_id, "date": {"$gte": today, "$lte": today}}
     mydoc1 = mycol.find(myquery1)
     count1 = mycol.count_documents(myquery1)
@@ -1634,6 +1650,7 @@ def getaddwh(id, date):
 # 用電量統計
 # 2023.11.10 新增
 # 2024.01.05 修改由 Zone / Group 計算
+# 2024.01.11 新增所有群組的統計。前端下拉選項"All"選項
 def getMonthStatistics1(id, date, type):
     total_addwh =0
     if type == "zone":
@@ -1642,7 +1659,10 @@ def getMonthStatistics1(id, date, type):
         mycol = mydb["statistics_group_day"]
 
     try:
-        myquery = {'id': id, "date": date}
+        if id != "non":
+            myquery = {'id': id, "date": date}
+        else:
+            myquery = {"date": date}
         count = mycol.count_documents(myquery)
         if count != 0:
             mydoc = mycol.find_one(myquery)
@@ -1673,8 +1693,9 @@ def monthCalculate(id, first, last, type):
         #print(value)
         item = {
                   "date": date1,
-                  "addwh": value
-                }
+                  "addwh": round(value / 1000, 2)
+                  #"addwh": value
+               }
         dataset.append(item)
         endate = date_object + datetime.timedelta(days=1)
         date1 = str(endate)
@@ -1757,7 +1778,7 @@ def zoneCalculate(list_data, firstdate, lastdate):
         item = {
                   'id': zoneId,
                   'name': x['zone'],
-                  'addwh': value
+                  'addwh': round(value/1000, 2)
                 }
         #print(item)
         dataset.append(item)
@@ -1799,18 +1820,13 @@ def getAnalysisData(json_data):
     getDataset = ''
 
     if keylist.count('group') == 0:
-        calculate1 = mainCalculateGroup(request_data['zone'], request_data['firstday'], request_data['lastday'],
-                                        request_data['today'], 'zone')  # 統計(修正)。[總用電量, 總使用時數, 今日用電量, 今日總時數]
-        getDataset = monthCalculate(request_data['zone'], request_data['firstday'], request_data['lastday'],
-                                    'zone')  # 本月每日的統計
+        calculate1 = mainCalculateGroup(request_data['zone'], request_data['firstday'], request_data['lastday'], request_data['today'], 'zone')  # 統計(修正)。[總用電量, 總使用時數, 今日用電量, 今日總時數]
+        getDataset = monthCalculate(request_data['zone'], request_data['firstday'], request_data['lastday'],'zone')  # 本月每日的統計
     elif keylist.count('zone') == 0:
-        calculate1 = mainCalculateGroup(request_data['group'], request_data['firstday'], request_data['lastday'],
-                                        request_data['today'], 'group')  # 統計(修正)。[總用電量, 總使用時數, 今日用電量, 今日總時數]
-        getDataset = monthCalculate(request_data['group'], request_data['firstday'], request_data['lastday'],
-                                    'group')  # 本月每日的統計
+        calculate1 = mainCalculateGroup(request_data['group'], request_data['firstday'], request_data['lastday'], request_data['today'], 'group')  # 統計(修正)。[總用電量, 總使用時數, 今日用電量, 今日總時數]
+        getDataset = monthCalculate(request_data['group'], request_data['firstday'], request_data['lastday'],'group')  # 本月每日的統計
     elif request_data['zone'] == 0 and request_data['group'] == 0:
-        calculate1 = mainCalculateAll(request_data['firstday'], request_data['lastday'],
-                                      request_data['today'])  # 統計(修正)。[總用電量, 總使用時數, 今日用電量, 今日總時數]
+        calculate1 = mainCalculateAll(request_data['firstday'], request_data['lastday'], request_data['today'])  # 統計(修正)。[總用電量, 總使用時數, 今日用電量, 今日總時數]
         getDataset = zoneCalculate(getZone, request_data['firstday'], request_data['lastday'])
 
     # print(getDataset)
@@ -2183,3 +2199,19 @@ def getDeviceInfo(devid, type):
         data = query1_data['equipment_index']
 
     return data
+
+
+
+# 刪除裝置分析
+# 2024.01.11 新增
+def deleteAnalysisData(id, type):
+    if type == "zone":
+        mycol = mydb["statistics_zone_day"]
+    else:
+        mycol = mydb["statistics_group_day"]
+
+    myquery = {"id": id}
+    # 刪除AnalysisData
+    mydoc = mycol.delete_many(myquery)
+
+    return {"status": "ok"}

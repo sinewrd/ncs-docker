@@ -146,7 +146,7 @@ function showZone1(item, i, type){
     image = '/static/images/8.Zone/normal_Medical-Building-230x230.png';
   }
   else if(i == 2){
-    image = '/static/images/8.Zone/normal_Medical-Building-230x230.png';
+    image = '/static/images/8.Zone/normal_Science-Building-230x230.png';
   }
   else if(i == 3){
     image = '/static/images/8.Zone/normal_Medical-Building-230x230.png';
@@ -322,7 +322,7 @@ function showDevicePanel1(id){
     var filterData = data['dataset'].filter(function(item, index, array){
       return item.id == id;
     });
-    //console.log(filterData[0]);
+    console.log(filterData[0]);
     let url = '/get/statistics/'+id;
     //console.log(url);
     $.ajax({
@@ -334,8 +334,7 @@ function showDevicePanel1(id){
         //data: JSON.stringify(param),
         //contentType: "application/json",
         success: function (response) {
-           //console.log(response['dataset'][0]['addwh']);
-           //console.log(response['dataset']);
+           console.log(response['dataset']);
            $('.dev_name').text(filterData[0]['name']);  //名稱
            //連線狀態
            let status = '';
@@ -350,12 +349,18 @@ function showDevicePanel1(id){
            //kwh
            //console.log(response['dataset'][0]['addwh']);
            //console.log(response['dataset'].length);
-           if(filterData[0]['conn_status'] == 'on' || response['dataset'].length == 0){
+           //console.log(filterData[0]);
+           if(filterData[0]['conn_status'] == 'on' && response['dataset'].length != 0){
+                //console.log(response['dataset'][0]);
+                $('.dev_kwh').text(response['dataset'][0]['addwh']);
+           }else if(filterData[0]['conn_status'] == 'on' && response['dataset'].length == 0){
+                $('.dev_kwh').text(0);
+           }else if(filterData[0]['conn_status'] == 'off' && response['dataset'].length != 0){
+                $('.dev_kwh').text(response['dataset'][0]['addwh']);
+           }else if(filterData[0]['conn_status'] == 'off' && response['dataset'].length == 0){
                 $('.dev_kwh').text(0);
            }
-           else{
-                $('.dev_kwh').text(response['dataset'][0]['addwh']);
-           }
+
 
            let zone_name ='';
            if( filterData[0]['zone_name'] =='none'){
@@ -2925,6 +2930,19 @@ function pagination(data, nowPage, type){
   else{
        prevPage = 1;
   }
+  //滑鼠位於其上的連接
+  $(".dev_left").hover(function(){
+     $(this).css('cursor', 'pointer');
+  }, function() {
+     $(this).css("cursor", "default");
+  });
+
+/*
+  //滑鼠活動連接
+  $(".dev_left").active(function(event){
+        $(this).css('cursor', 'pointer');
+  });
+*/
   $(".dev_left").click(function(event){
       pagination(data, prevPage, type);
       event.stopPropagation();
@@ -2937,6 +2955,13 @@ function pagination(data, nowPage, type){
   else{
        afterPage = currentPage +1;
   }
+
+  //滑鼠位於其上的連接
+  $(".dev_right").hover(function(){
+     $(this).css('cursor', 'pointer');
+  }, function() {
+     $(this).css("cursor", "default");
+  });
 
   $(".dev_right").click(function(event){
       pagination(data, afterPage, type);
@@ -3012,6 +3037,119 @@ function pagination(data, nowPage, type){
   });
   */
 }
+
+
+
+//製作分頁
+function pagination1(type){
+  console.log(data['dataset']);
+  console.log(nowPage);
+
+
+  let leftbtn = document.getElementById("dev_left");
+  let rightbtn = document.getElementById("dev_right");
+  // 取得資料長度
+  let dataTotal = data.length;
+  // 要顯示在畫面上的資料數量，預設每一頁只顯示四筆資料。
+  let perpage = 0;
+  if(type == 'dashboard'){
+    perpage = 30;
+  }
+  else if(type == 'device'){
+    perpage = 10;
+  }
+  else if(type == 'equipment'){
+    perpage = 10;
+  }
+  else if(type == 'zone' || type == 'group'){
+    perpage = 10;
+  }
+  else if(type == 'account'){
+    perpage = 10;
+  }
+  else if(type == 'log'){
+    perpage = 10;
+  }
+  // page 按鈕總數量公式 總資料數量 / 每一頁要顯示的資料
+  // 這邊要注意，因為有可能會出現餘數，所以要無條件進位。
+  let pageTotal = Math.ceil(dataTotal / perpage);
+  // 當前頁數
+  let currentPage = nowPage;
+  tempPage = currentPage;
+  //nowPage = currentPage;
+  // 當”當前頁數”比”總頁數”大的時候，”當前頁數”就等於”總頁數”
+  if (currentPage > pageTotal) {
+    currentPage = pageTotal;
+  }
+  const minData = (currentPage * perpage)-perpage+1;   //最小值筆數  當前頁面去乘每一頁顯示得數量再減去每一頁顯示得數量，此時會得到 5 這個數字，但是我們是第 6 筆開始，所以要在 +1
+  const maxData = (currentPage * perpage);             //最大值筆數
+  // 資料切換
+  let prevPage = 1;
+  if(currentPage > 1){
+       prevPage = currentPage -1;
+  }
+  else{
+       prevPage = 1;
+  }
+  //滑鼠位於其上的連接
+  $(".dev_left").hover(function(){
+     $(this).css('cursor', 'pointer');
+  }, function() {
+     $(this).css("cursor", "default");
+  });
+
+  $(".dev_left").click(function(event){
+      pagination(data, prevPage, type);
+      event.stopPropagation();
+      //alert("The paragraph was clicked.");
+  });
+  let afterPage = 1;
+  if(currentPage == pageTotal){
+       afterPage = currentPage;
+  }
+  else{
+       afterPage = currentPage +1;
+  }
+
+  //滑鼠位於其上的連接
+  $(".dev_right").hover(function(){
+     $(this).css('cursor', 'pointer');
+  }, function() {
+     $(this).css("cursor", "default");
+  });
+
+  $(".dev_right").click(function(event){
+      pagination(data, afterPage, type);
+      event.stopPropagation();
+      //alert("The paragraph was clicked.");
+  });
+
+  // 先建立新陣列
+  let obj = new Array();
+  // 使用 ES6 forEach 做資料處理
+  // 這邊必須使用索引來判斷資料位子，所以要使用 index
+  data['dataset'].forEach((item, index) => {
+    // 獲取陣列索引，但因為索引是從 0 開始所以要 +1。
+    const num = index + 1;
+    // 這邊判斷式會稍微複雜一點
+    // 當 num 比 minData 大且又小於 maxData 就push進去新陣列。
+    if(num >= minData && num <= maxData){
+        obj.push(item);
+    }
+  });
+  console.log(obj);      //顯示每頁結果
+  // 用物件方式來傳遞資料
+  const page = {
+    pageTotal,
+    currentPage,
+    hasPage: currentPage > 1,
+    hasNext: currentPage < pageTotal,
+    //sorted,
+  };
+}
+
+
+
 
 //製作分頁區域
 function paginationZone(data, nowPageZone, type){
@@ -3376,11 +3514,11 @@ function selectGroup(type){
    }
    else{
         filterData = data['dataset'].filter(function(item, index, array){
-            //console.log(group_type);
+            console.log(group_type);
             return item.group_id == group_type;       // 取得大於五歲的
         });
    }
-   //console.log(filterData);
+   console.log(filterData);
    if(type == 'dashboard'){
      //console.log(filterData);
      //displayData(filterData);
@@ -3772,15 +3910,21 @@ function statisticsgroup(){
      //let zoneId = $('#zoneId').val();
      //console.log(zone_id);
      let groupId = $('.group-dev').val();
-     //查詢裝置清單
-     //getAnalysisDataPromse(zone_id, groupId, today, get_first_last[0], today)
-     getAnalysisZoneDataPromse(groupId, today, get_first_last[0], today, 'group')
-     .then(function(obj_data) {
-        //console.log(obj_data);
-        //顯示畫面
-        showDataChart(obj_data, days);
-        //pagination(obj_data['dataset'], nowPage, 'device');
-     });
+     console.log(groupId);
+
+     if(groupId != 'unselect'){
+        $(".group-dev option[value='unselect']").remove();
+        //location.href = "/analysis";
+         //查詢裝置清單
+         //getAnalysisDataPromse(zone_id, groupId, today, get_first_last[0], today)
+         getAnalysisZoneDataPromse(groupId, today, get_first_last[0], today, 'group')
+         .then(function(obj_data) {
+            //console.log(obj_data);
+            //顯示畫面
+            showDataChart(obj_data, days);
+            //pagination(obj_data['dataset'], nowPage, 'device');
+         });
+     }
 }
 
 //匯出Log
@@ -4202,4 +4346,36 @@ function processfile(file){
             }
         }
     });
+}
+
+
+//監聽伺服器網路
+function listenOnline(){
+    let url = '/login';
+
+     $.ajax({
+            //url: '/api/sensor/?device='+device,
+            url: url,
+            type: "GET",
+            cache: false,
+            async: false,
+            //data: JSON.stringify(param),
+            //contentType: "application/json",
+            success: function (response, status, xhr) {
+                //console.log(xhr['readyState']);
+                //console.log(xhr.status);  //網路連線狀態
+                if(xhr.status == 200){
+                    $('.div_right_bottom').hide();
+                }
+                data = response;
+            },
+            complete: function() {
+                //console.log('finish')
+            },
+            error: function (error) {
+              console.log(error);
+              $('.div_right_bottom').show();
+              //$("input[name='Checkbox[]']").attr("disabled", true);
+            }
+     });
 }
