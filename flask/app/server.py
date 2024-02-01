@@ -18,7 +18,7 @@ mongo_port = int(os.environ.get('MONGO_PORT'))
 mongo_db = os.environ.get('MONGO_DB')
 mongo_username = os.environ.get('MONGO_USERNAME')
 mongo_password = os.environ.get('MONGO_PASSWORD')
-
+datetime_threshold = int(os.environ.get('DateTimeThreshold'))
 
 myclient = pymongo.MongoClient(
                 host=mongo_host,
@@ -1069,6 +1069,34 @@ def uploadFile():
         # 寫入資料庫
         response_data = baseConfigSetData(request.values['title'], "None")
         return jsonify({"status": "ok"})
+
+
+
+# 定時輪詢系統時間
+# 2024.01.17 新增
+# 2024.01.25 增加本地時間戳
+#@app.route('/getnowtime', methods=['GET'])
+@app.route('/getnowtime/<float:float_params>', methods=['GET'])
+def getSystemDateTime(float_params):
+    #def getSystemDateTime():
+    LocalTime = time.asctime(time.localtime(time.time()))
+    # 伺服器時間
+    timestatus = ''
+    now = datetime.datetime.now()
+    nowDateTime = now.timestamp()
+    gap = round(abs(float_params - nowDateTime))
+    #print(gap)
+    if gap < datetime_threshold:
+        timestatus = "ok"
+    else:
+        timestatus = "error"
+
+    datatime = {
+                "nowTime": LocalTime,
+                "timeStatus": timestatus
+                }
+
+    return jsonify(datatime)
 
 
 if __name__ == '__main__':

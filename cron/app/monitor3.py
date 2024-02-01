@@ -26,6 +26,8 @@ myclient = pymongo.MongoClient(
 
 mydb = myclient[mongo_db]
 
+now = datetime.datetime.now()
+
 
 # 判斷是否有Collection
 # param: 以字串方式傳輸"collection name"
@@ -37,6 +39,79 @@ def checkExistCollection(colname):
         return "exist"
     else:
         return "no_exist"
+
+
+# Log紀錄
+# param: 以JSON方式傳輸 request_data
+# 2023.08.17 修改
+def recordLog(json_data):
+    # request_data = json.loads(json_data)
+    request_data = json_data
+    mycol = mydb["log"]
+    # 現在時間    
+    date_time = now.strftime("%Y-%m-%d %H:%M:%S")
+
+    mydict = {
+        "datetime": str(date_time),
+        "role": request_data['role'],
+        "id": request_data['id'],
+        "msg": request_data['msg'],
+        "category": request_data['category']
+    }
+
+    x = mycol.insert_one(mydict)
+    return "sucess"
+
+
+
+# 清除Log紀錄
+def clearLog():    
+    # 取得前三個月的時間
+    #one_hour_ago = now - timedelta(hours=2160) ## 24 * 90
+    #Threshold = str(one_hour_ago).split(' ')
+    timeString = str(datetime.datetime(now.year, now.month, 1) - timedelta(days=1))[:10]
+    timeString = timeString+" 00:00:00"
+    struct_time = datetime.datetime.strptime(timeString, "%Y-%m-%d %H:%M:%S") # 轉成時間元組
+    timestamp_specified = datetime.datetime.timestamp(struct_time)
+
+    mycollection = mydb["log"] # 數据
+    myquery = {"datetime": {"$lt":timestamp_specified}} ## 條件
+    result = mycollection.delete_many(myquery)
+    # Log 紀錄
+    payload = {
+        "role": "system",
+        "id": "cron",
+        "msg": "Execute clear log record",
+        "category": 4
+    }
+    recordLog(payload)
+
+    return "sucess"
+
+
+# 清除Raw Data紀錄
+def clearPowerMeter():
+    # 取得前一天前的時間
+    today = datetime.date.today()    
+    #one_day_ago = now - timedelta(days=1) ## 24 * 90
+    yesterday = today - timedelta(days=1)
+    timeString = str(yesterday)+" 00:00:00"
+    struct_time = datetime.datetime.strptime(timeString, "%Y-%m-%d %H:%M:%S") # 轉成時間元組
+    timestamp_specified = datetime.datetime.timestamp(struct_time)
+
+    mycollection = mydb["power_meter"] # 數据
+    myquery = {"datetime": {"$lt":timestamp_specified}} ## 條件
+    result = mycollection.delete_many(myquery)
+    # Log 紀錄
+    payload = {
+        "role": "system",
+        "id": "cron",
+        "msg": "Execute clear raw data record",
+        "category": 4
+    }
+    recordLog(payload)
+
+    return "sucess"
 
 
 # 主程式
@@ -92,6 +167,12 @@ def main():
         print('create group collection\n')
     else:
         print('group collection exist\n')        
+
+    
+    # 清除Log紀錄    
+    clearLog()
+    # 清除Raw Data紀錄    
+    clearPowerMeter()
 
 if __name__ == '__main__':
     main()

@@ -5,7 +5,7 @@ MONGO_IP=$(getent hosts mongo | awk '{ print $1 }')
 echo "MongoDB IP: $MONGO_IP"
 
 export MONGO_HOST="$MONGO_IP"
-export MONGO_PORT=27017
+export MONGO_PORT="27017"
 export MONGO_DB="ncs"
 export MONGO_USERNAME="sinew"
 export MONGO_PASSWORD="sinew3612"

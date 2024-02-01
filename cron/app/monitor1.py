@@ -27,20 +27,56 @@ myclient = pymongo.MongoClient(
 mydb = myclient[mongo_db]
 
 
+# Log紀錄
+# param: 以JSON方式傳輸 request_data
+# 2023.08.17 修改
+def recordLog(json_data):
+    # request_data = json.loads(json_data)
+    request_data = json_data
+    mycol = mydb["log"]
+    # 現在時間
+    now = datetime.datetime.now()
+    date_time = now.strftime("%Y-%m-%d %H:%M:%S")
+
+    mydict = {
+        "datetime": str(date_time),
+        "role": request_data['role'],
+        "id": request_data['id'],
+        "msg": request_data['msg'],
+        "category": request_data['category']
+    }
+
+    x = mycol.insert_one(mydict)
+    return "sucess"
+
+
+
 # 主程式
 def main():
     ## 現在時間
     nowdt = datetime.datetime.now()
     #print('現在時間:', nowdt)
     # 取得前三個月的時間
-    one_hour_ago = nowdt - timedelta(hours=2160) ## 24 * 90
-    Threshold = str(one_hour_ago).split(' ')
+    #one_hour_ago = nowdt - timedelta(hours=2160) ## 24 * 90
+    #Threshold = str(one_hour_ago).split(' ')
+    timeString = str(datetime.datetime(now.year, now.month, 1) - timedelta(days=1))[:10]
+    timeString = timeString+" 00:00:00"
+    struct_time = datetime.datetime.strptime(timeString, "%Y-%m-%d %H:%M:%S") # 轉成時間元組
+    timestamp_specified = datetime.datetime.timestamp(struct_time)
 
     mycollection = mydb["log"] # 數据
-    myquery = {"datetime": {"$lt":Threshold[0]}} ## 條件
+    myquery = {"datetime": {"$lt":timestamp_specified}} ## 條件
     result = mycollection.delete_many(myquery)
 
     today = datetime.date.today()
+    # Log 紀錄
+    payload = {
+        "role": "system",
+        "id": "cron",
+        "msg": "Execute clear log record",
+        "category": 4
+    }
+    recordLog(payload)
 
     print(today)
 

@@ -103,7 +103,8 @@ function showDevice1(item){
   //str1 += "<img src='{{url_for('static', filename='images/9.Device/power_on-183x119_new.png')}}' class='image'>";
 
   str1 += "</div>";
-  str1 += "<div class='div2 px-2'><a href='javascript:void(0)' onClick=\"showDevicePanel1('"+item['id']+"')\"><i class='fas fa-ellipsis-h' style='font-size:18px;color:#47525D;'></i></a></div>";
+  //str1 += "<div class='div2 px-2'><a href='javascript:void(0)' onClick=\"showDevicePanel1('"+item['id']+"')\"><i class='fas fa-ellipsis-h' style='font-size:18px;color:#47525D;'></i></a></div>";
+  str1 += "<div class='div2 px-2'><a href='javascript:void(0)' onClick='showDevicePanel1("+JSON.stringify(item)+")'><i class='fas fa-ellipsis-h' style='font-size:18px;color:#47525D;'></i></a></div>";
   str1 += "</div>";
   str1 += "</td>";
 
@@ -133,13 +134,16 @@ function showDevice2(){
 
 //顯示Zone樣版
 function showZone1(item, i, type){
-  //console.log(i);
+  //console.log(item);
   let image = '';
   let str1 ='';
 
   str1 += '<td>';
   str1 += '<a href="javascript:void(0)"><div class="container1">';
-  if(i == 0){
+  if(item == undefined){
+    image = '/static/images/8.Zone/Empty-230x230.png';
+  }
+  else if(i == 0){
     image = '/static/images/8.Zone/normal_Science-Building-230x230.png';
   }
   else if(i == 1){
@@ -158,6 +162,20 @@ function showZone1(item, i, type){
     image = '/static/images/8.Zone/normal_Mechatronics-230x230.png';
   }
 
+  if(item != undefined){
+    let data_json = {"index": item['index'],
+                     "zone": item['zone'],
+                     "type": type,
+                     "i": i
+                    }
+     //console.log(data_json);
+    str1 += '<img src="'+image+'" width="105%" class="image'+i+'" onclick=\'redirectURL1('+JSON.stringify(data_json)+')\'>';
+  }
+  else{
+    str1 += '<img src="'+image+'" width="105%" class="image'+i+'">';
+  }
+  /*
+  str1 += '<img src="'+image+'" width="105%" class="image'+i+'" onclick=\'redirectURL("'+item['index']+'", "'+type+'", '+i+')\'>';
   if(type == 'dashboard'){
     //console.log(item['index']);
     //str1 += '<img src="'+image+'" width="110%" class="image'+item['index']+'" onclick=\'redirectURL('+item['index']+', "dashboard", '+i+')\'>';
@@ -170,12 +188,39 @@ function showZone1(item, i, type){
     str1 += '<img src="'+image+'" width="105%" class="image'+i+'" onclick=\'redirectURL("'+item['index']+'", "analysis", '+i+')\'>';
     //console.log(typeof item['index'])
   }
-  str1 += '<div class="text'+i+'">'+item['zone']+'</div>';
+  */
+  if(item != undefined){
+    str1 += '<div class="text'+i+'">'+item['zone']+'</div>';
+  }
+  else{
+    str1 += '<div class="text_empty"></div>';
+  }
   str1 += '</a>';
   str1 += '</td>';
 
   return str1;
 }
+
+
+
+//顯示Zone樣版 -- 空白
+function showZone2(item, i){
+  //console.log(i);
+  let image = '';
+  let str1 ='';
+
+  str1 += '<td>';
+  str1 += '<div class="container1">';
+  image = '/static/images/8.Zone/Empty-230x230.png';
+
+  str1 += '<img src="'+image+'" width="105%" class="image'+i+'">';
+  str1 += '<div class="text_empty"></div>';
+  str1 += '</div>';
+  str1 += '</td>';
+
+  return str1;
+}
+
 
 
 // 隨機取數
@@ -315,15 +360,20 @@ function showDevicePanel(id, dict_data){
     });
 }
 
-function showDevicePanel1(id){
-    //console.log(id);
+//function showDevicePanel1(id){
+function showDevicePanel1(string_json){
     $('#ModalLabel').text('Device Information'); //Title
     //console.log(data);
+    var filterData = string_json;
+    console.log(filterData);
+    /*
     var filterData = data['dataset'].filter(function(item, index, array){
       return item.id == id;
     });
-    console.log(filterData[0]);
-    let url = '/get/statistics/'+id;
+    */
+    //console.log(filterData);
+
+    let url = '/get/statistics/'+filterData['id'];
     //console.log(url);
     $.ajax({
         //url: '/api/sensor/?device='+device,
@@ -335,10 +385,10 @@ function showDevicePanel1(id){
         //contentType: "application/json",
         success: function (response) {
            console.log(response['dataset']);
-           $('.dev_name').text(filterData[0]['name']);  //名稱
+           $('.dev_name').text(filterData['name']);  //名稱
            //連線狀態
            let status = '';
-           if(filterData[0]['conn_status'] == 'on'){
+           if(filterData['conn_status'] == 'on'){
                 status = 'On-line';
            }
            else{
@@ -350,34 +400,39 @@ function showDevicePanel1(id){
            //console.log(response['dataset'][0]['addwh']);
            //console.log(response['dataset'].length);
            //console.log(filterData[0]);
-           if(filterData[0]['conn_status'] == 'on' && response['dataset'].length != 0){
+           if(filterData['conn_status'] == 'on' && response['dataset'].length != 0){
                 //console.log(response['dataset'][0]);
                 $('.dev_kwh').text(response['dataset'][0]['addwh']);
-           }else if(filterData[0]['conn_status'] == 'on' && response['dataset'].length == 0){
+           }else if(filterData['conn_status'] == 'on' && response['dataset'].length == 0){
                 $('.dev_kwh').text(0);
-           }else if(filterData[0]['conn_status'] == 'off' && response['dataset'].length != 0){
-                $('.dev_kwh').text(response['dataset'][0]['addwh']);
-           }else if(filterData[0]['conn_status'] == 'off' && response['dataset'].length == 0){
+           }else if(filterData['conn_status'] == 'off'){
                 $('.dev_kwh').text(0);
            }
+           /*
+           }else if(filterData['conn_status'] == 'off' && response['dataset'].length != 0){
+                $('.dev_kwh').text(response['dataset'][0]['addwh']);
+           }else if(filterData['conn_status'] == 'off' && response['dataset'].length == 0){
+                $('.dev_kwh').text(0);
+           }
+           */
 
 
            let zone_name ='';
-           if( filterData[0]['zone_name'] =='none'){
+           if( filterData['zone_name'] =='none'){
                 zone_name = 'Not Zone';
            }
            else{
                 //let zone = getZone(filterData[0]['zone_id']);
-                zone_name = filterData[0]['zone_name'];
+                zone_name = filterData['zone_name'];
            }
            $('.dev_zone').text(zone_name);
 
            let group_name ='';
-           if( filterData[0]['group_name'] =='none'){
+           if( filterData['group_name'] =='none'){
                 group_name = 'Not Group';
            }
            else{
-                group_name = filterData[0]['group_name']
+                group_name = filterData['group_name']
            }
            $('.dev_group').text(group_name);
         },
@@ -904,6 +959,7 @@ function getAnalysisDataPromse(zone, group, today, firstday, lastday){
         let url = '/get/analysisdata';
         //let url = '/get/test/datainfo';
         var param = {"zone": zone, "group": group, "today": today, "firstday": firstday, "lastday": lastday}
+        //console.log(param);
         let data1 ='';
         $.ajax({
             //url: '/api/sensor/?device='+device,
@@ -1076,6 +1132,10 @@ function showDeviceListTable(obj_data, group_list, equipment_list, zone_list){
     //console.log(obj_data);
     //obj_data['dataset'].forEach(function(value) {
     obj_data.forEach(function(value) {
+        //console.log(value);
+        //console.log( JSON.parse(JSON.stringify(value)) );
+        let obj_String = JSON.stringify(value);
+        //console.log(obj_String);
         //console.log(value['equipment_index']);
         //console.log(value['zone_id']);
         //console.log(value['group_id']);
@@ -1168,7 +1228,7 @@ function showDeviceListTable(obj_data, group_list, equipment_list, zone_list){
         str += '<td id="act-'+value['id']+'">';
         // Button
         //if(value['active'] == 1){
-        str += '<button type="button" class="btn btn-success mr-2" onClick=\'editDeviceSetting("'+value['id']+'")\'>Edit</button>';
+        str += '<button type="button" class="btn btn-success mr-2" onClick=\'editDeviceSetting('+obj_String+')\'>Edit</button>';
         //str += '<button type="button" class="btn btn-success mr-2" onClick=\'setDevice("'+value['id']+'", "set")\'>Setting</button>';
         /*
         }
@@ -1186,12 +1246,18 @@ function showDeviceListTable(obj_data, group_list, equipment_list, zone_list){
 }
 
 //裝置設定彈跳視窗
-function editDeviceSetting(id){
-    //console.log(data);
+//function editDeviceSetting(id){
+function editDeviceSetting(string_json){
+    //console.log(string_json);
+    //console.log(string_json['id']);
+    /*
     var filterObj = data['dataset'].filter(function(item, index, array){
                 return item.id == id;
             });
-    console.log(filterObj[0]);
+            */
+    var filterObj =string_json;
+    //console.log(filterObj[0]);
+
     let group_list =callWebAPI('/grouplist', 'get', 'None'); //取出群組列表
     let equipment_list =callWebAPI('/equipmentcodelist', 'get', 'None'); //取出設備列表
     let zone_list =callWebAPI('/zonelist', 'get', 'None'); //取出Zone列表
@@ -1199,13 +1265,13 @@ function editDeviceSetting(id){
     //console.log(equipment_list);
     //console.log(zone_list);
     //Zone
-    let urlvaild1 = '/zonelist/'+filterObj[0]['zone_id']
+    let urlvaild1 = '/zonelist/'+filterObj['zone_id']
     let zone_list1 =callWebAPI(urlvaild1, 'get', 'None'); //取出群組列表
     //Group
-    let urlvaild = '/grouplist/'+filterObj[0]['group_id']
+    let urlvaild = '/grouplist/'+filterObj['group_id']
     let group_list1 =callWebAPI(urlvaild, 'get', 'None'); //取出群組列表
     //Equipment
-    let urlvaild2 = '/equipmentcodelist/'+filterObj[0]['equipment_index']
+    let urlvaild2 = '/equipmentcodelist/'+filterObj['equipment_index']
     let equipment_list1 =callWebAPI(urlvaild2, 'get', 'None'); //取出群組列表
     //console.log(equipment_list1['dataset'].length);
 
@@ -1217,7 +1283,7 @@ function editDeviceSetting(id){
     str += "<div class='form-group row'>";
     str += "<label for='id' class='col-2 col-form-label'>ID</label>";
     str += "<div class='col-10'>";
-    str += "<input type='text' readonly class='form-control-plaintext pt-2 pl-4' id='staticID' value='"+id+"'>";
+    str += "<input type='text' readonly class='form-control-plaintext pt-2 pl-4' id='staticID' value='"+filterObj['id']+"'>";
     //str += id;
     str += "</div>";
     str += "</div>";
@@ -1225,7 +1291,7 @@ function editDeviceSetting(id){
     str += "<div class='form-group row'>";
     str += "<label for='name' class='col-2 col-form-label'>Name</label>";
     str += "<div class='col-8 ml-4'>";
-    str += "<input type='text' class='form-control' id='dev_name' value='"+filterObj[0]['name']+"' >";
+    str += "<input type='text' class='form-control' id='dev_name' value='"+filterObj['name']+"' >";
     //str += id;
     str += "</div>";
     str += "</div>";
@@ -1234,12 +1300,12 @@ function editDeviceSetting(id){
     str += "<label for='name' class='col-2 col-form-label'>Equipment</label>";
     str += "<div class='col-8 ml-4'>";
     str += '<select class="form-control" id="dev_equipment">';
-    if(filterObj[0]['active'] == 0 || equipment_list1['dataset'].length == 0 || filterObj[0]['equipment_name'] == "none"){
+    if(filterObj['active'] == 0 || equipment_list1['dataset'].length == 0 || filterObj['equipment_name'] == "none"){
         str += '<option value=0>-- Select --</option>';
     }
     equipment_list['dataset'].forEach(function(value1) {
        str += '<option value="'+value1['index']+'"';
-       if(value1['index'] == filterObj[0]['equipment_index']){
+       if(value1['index'] == filterObj['equipment_index']){
            str += ' selected';
        }
        str += '>'+value1['brand']+'-'+value1['model']+'</option>';
@@ -1252,12 +1318,12 @@ function editDeviceSetting(id){
     str += "<label for='name' class='col-2 col-form-label'>Zone</label>";
     str += "<div class='col-8 ml-4'>";
     str += '<select class="form-control" id="dev_zone">';
-    if(filterObj[0]['active'] == 0 || zone_list1['group'].length == 0 || filterObj[0]['zone_name'] == "none"){
+    if(filterObj['active'] == 0 || zone_list1['group'].length == 0 || filterObj['zone_name'] == "none"){
         str += '<option value=0>-- Select --</option>';
     }
     zone_list['group'].forEach(function(value1) {
        str += '<option value="'+value1['index']+'"';
-       if(value1['index'] == filterObj[0]['zone_id']){
+       if(value1['index'] == filterObj['zone_id']){
            str += ' selected';
        }
        str += '>'+value1['zone']+'</option>';
@@ -1272,12 +1338,12 @@ function editDeviceSetting(id){
     str += "<label for='name' class='col-2 col-form-label'>Group</label>";
     str += "<div class='col-8 ml-4'>";
     str += '<select class="form-control" id="dev_group">';
-    if(filterObj[0]['active'] == 0 || group_list1['group'].length == 0 || filterObj[0]['group_name'] == "none"){
+    if(filterObj['active'] == 0 || group_list1['group'].length == 0 || filterObj['group_name'] == "none"){
         str += '<option value=0>-- Select --</option>';
     }
     group_list['group'].forEach(function(value1) {
        str += '<option value="'+value1['index']+'"';
-       if(value1['index'] == filterObj[0]['group_id']){
+       if(value1['index'] == filterObj['group_id']){
            str += ' selected';
        }
        str += '>'+value1['name']+'</option>';
@@ -1294,16 +1360,33 @@ function editDeviceSetting(id){
 
     //Button
     let str1 ='';
-    if(filterObj[0]['active'] == 1){
-        str1 += '<button type="button" class="btn btn-secondary login100-form-title text-white mr-2" onClick=\'setDevice1("'+id+'", "set")\'>OK</button>';
+    if(filterObj['active'] == 1){
+        str1 += '<button type="button" class="btn btn-secondary login100-form-title text-white mr-2" onClick=\'setDevice1("'+filterObj['id']+'", "set")\'>OK</button>';
     }
     else{
-        str1 += '<button type="button" class="btn btn-success mr-2" onClick=\'setDevice1("'+id+'", "reg")\'>OK</button>';
+        str1 += '<button type="button" class="btn btn-success mr-2" onClick=\'setDevice1("'+filterObj['id']+'", "reg")\'>OK</button>';
     }
     str1 += '<button type=\'button\' class=\'btn btn-secondary\' data-dismiss=\'modal\'>Cancel</button>';
+    //Listen Name Element
+    /*
+    const input = document.querySelector("#dev_name");
+    input.addEventListener("input", checkEmptyValue);
+    */
     $('#showForm .footer-content').html(str1);
     $('#showForm').modal({backdrop: 'static', keyboard: false});
 }
+
+
+function checkEmptyValue(e){
+    let word = e.srcElement.value;
+    //console.log(word);
+    if( word.length == 0 ){
+        //console.log($('#staticID').val());
+        $('#dev_name').val($('#staticID').val());
+    }
+}
+
+
 
 //JS 隔字元加入字串
 //@param {String} str 需要插入的字元
@@ -1860,7 +1943,7 @@ function execAction(event, act){
 
     if(act == "on"){
         checkboxes.forEach(function(obj) {
-            console.log(obj.value);
+            //console.log(obj.value);
             execution(event, 'ON', ''+obj.value+'', 'rs232tx')
         });
     }
@@ -2063,7 +2146,7 @@ function setDevice1(id, type){
     //console.log(userId);
     actBindDevicePromse1(id, type)
     .then(function(obj_data) {
-        console.log(obj_data);
+        //console.log(obj_data);
         $('.total').text(obj_data['total']);
         $('.register').text(obj_data['reg']);
         $('.unregister').text(obj_data['unreg']);
@@ -2123,8 +2206,15 @@ function actBindDevicePromse(id, type){
 function actBindDevicePromse1(id, type){
     return new Promise(function(resolve, reject) {
         let url = '/device/bind';
-
+        //let name = '';
         let name = $('#dev_name').val();
+        if(name.length != 0){
+            name = $('#dev_name').val();
+        }
+        else{
+            name = $('#staticID').val();
+        }
+        console.log(name);
         let equipment = $('#dev_equipment').val();
         //console.log(equipment);
         let group = $('#dev_group').val();
@@ -2880,275 +2970,190 @@ function actCreateEquipmentPromse(){
 
 
 //製作分頁
-function pagination(data, nowPage, type){
-  //console.log(data);
-  let leftbtn = document.getElementById("dev_left");
-  let rightbtn = document.getElementById("dev_right");
-  // 取得資料長度
-  let dataTotal = data.length;
-  // 要顯示在畫面上的資料數量，預設每一頁只顯示四筆資料。
-  let perpage = 0;
-  if(type == 'dashboard'){
-    perpage = 30;
-  }
-  else if(type == 'device'){
-    perpage = 10;
-  }
-  else if(type == 'equipment'){
-    perpage = 10;
-  }
-  else if(type == 'zone' || type == 'group'){
-    perpage = 10;
-  }
-  else if(type == 'account'){
-    perpage = 10;
-  }
-  else if(type == 'log'){
-    perpage = 10;
-  }
-  // page 按鈕總數量公式 總資料數量 / 每一頁要顯示的資料
-  // 這邊要注意，因為有可能會出現餘數，所以要無條件進位。
-  let pageTotal = Math.ceil(dataTotal / perpage);
-  //console.log(pageTotal);
-  //let sorted = localStorage.getItem('sorted');
-  //console.log('全部資料:'+pageTotal+' 每一頁顯示:'+perpage+'筆');
-  // 當前頁數
-  let currentPage = nowPage;
-  tempPage = currentPage;
-  //nowPage = currentPage;
-  // 當”當前頁數”比”總頁數”大的時候，”當前頁數”就等於”總頁數”
-  if (currentPage > pageTotal) {
-    currentPage = pageTotal;
-  }
-  const minData = (currentPage * perpage)-perpage+1;   //最小值筆數  當前頁面去乘每一頁顯示得數量再減去每一頁顯示得數量，此時會得到 5 這個數字，但是我們是第 6 筆開始，所以要在 +1
-  const maxData = (currentPage * perpage);             //最大值筆數
-  // 資料切換
-  let prevPage = 1;
-  if(currentPage > 1){
-       prevPage = currentPage -1;
-  }
-  else{
-       prevPage = 1;
-  }
-  //滑鼠位於其上的連接
-  $(".dev_left").hover(function(){
-     $(this).css('cursor', 'pointer');
-  }, function() {
-     $(this).css("cursor", "default");
-  });
+function pagination(jsonData, nowPage, type){
 
+      //let var_data = data;
+      //let var_nowPage = nowPage;
+      //let var_type = type;
+      //console.log(data);
+      //let leftbtn = document.querySelector(".dev_left");
+      //let rightbtn = document.querySelector(".dev_right");
+      // 取得資料長度
+      let dataTotal = jsonData.length;
+      // 要顯示在畫面上的資料數量，預設每一頁只顯示四筆資料。
+      let perpage = 0;
+      if(type == 'dashboard'){
+        perpage = 30;
+      }
+      else if(type == 'device'){
+        perpage = 10;
+      }
+      else if(type == 'equipment'){
+        perpage = 10;
+      }
+      else if(type == 'zone' || type == 'group'){
+        perpage = 10;
+      }
+      else if(type == 'account'){
+        perpage = 10;
+      }
+      else if(type == 'log'){
+        perpage = 10;
+      }
+      // page 按鈕總數量公式 總資料數量 / 每一頁要顯示的資料
+      // 這邊要注意，因為有可能會出現餘數，所以要無條件進位。
+      let pageTotal = Math.ceil(dataTotal / perpage);
+      //console.log(pageTotal);
+      //let sorted = localStorage.getItem('sorted');
+      //console.log('全部資料:'+pageTotal+' 每一頁顯示:'+perpage+'筆');
+      // 當前頁數
+      let currentPage = nowPage;
+      //tempPage = currentPage;
+      //nowPage = currentPage;
+      // 當”當前頁數”比”總頁數”大的時候，”當前頁數”就等於”總頁數”
+      if (currentPage > pageTotal) {
+        currentPage = pageTotal;
+      }
+      const minData = (currentPage * perpage)-perpage+1;   //最小值筆數  當前頁面去乘每一頁顯示得數量再減去每一頁顯示得數量，此時會得到 5 這個數字，但是我們是第 6 筆開始，所以要在 +1
+      const maxData = (currentPage * perpage);             //最大值筆數
+      //console.log(minData);
+      //console.log(maxData);
+      // 先建立新陣列
+      let obj_data1 = [];
+      // 使用 ES6 forEach 做資料處理
+      // 這邊必須使用索引來判斷資料位子，所以要使用 index
+      jsonData.forEach((item, index) => {
+        // 獲取陣列索引，但因為索引是從 0 開始所以要 +1。
+        const num = index + 1;
+        // 這邊判斷式會稍微複雜一點
+        // 當 num 比 minData 大且又小於 maxData 就push進去新陣列。
+        if(num >= minData && num <= maxData){
+            obj_data1.push(item);
+        }
+      });
+      //console.log(obj_data1);      //顯示每頁結果
+
+      // 用物件方式來傳遞資料
+      const page = {
+        pageTotal,
+        currentPage,
+        hasPage: currentPage > 1,
+        hasNext: currentPage < pageTotal,
+        jsonData: jsonData,
+        //sorted,
+      };
+
+      displayNowPageata(obj_data1, page, type);  //顯示目前資料內容
+      pageBtn(page, type);
+}
+
+
+//顯示目前分頁資料
+function displayNowPageata(obj, page, type){
+      //console.log(page);
+      //顯示畫面
+      if(type == 'dashboard'){
+         displayData(obj);
+      }
+      else if(type == 'device'){
+         let group =callWebAPI('/group', 'get', 'None'); //取出群組列表
+         let equipment =callWebAPI('/equipmentcode', 'get', 'None'); //取出設備列表
+         let zone =callWebAPI('/zone', 'get', 'None'); //取出Zone列表
+         //console.log(zone);
+         showDeviceListTable(obj, group, equipment, zone);
+         $('.total_page').text(page.pageTotal);
+         $('.current_page').text(page.currentPage);
+         //displayData1(obj);
+      }
+      else if(type == 'equipment'){
+            //console.log(obj);
+            //obj = obj.sort(function (a, b) { return a.Index < b.Index ? 1 : -1; });  //由高到低排序
+          showEquipmentListTable(obj); //顯示畫面
+           $('.total_page').text(page.pageTotal);
+           $('.current_page').text(page.currentPage);
+      }
+      else if(type == 'zone' || type == 'group'){
+            //console.log(obj);
+            showZoneListTable(obj, type); //顯示畫面
+            $('.total_page').text(page.pageTotal);
+            $('.current_page').text(page.currentPage);
+      }
+      else if(type == 'account'){
+            //console.log(obj);
+            showAccountListTable(obj); //顯示畫面
+            $('.total_page').text(page.pageTotal);
+            $('.current_page').text(page.currentPage);
+      }
+      else if(type == 'log'){
+            //console.log(obj);
+            showLogListTable(obj); //顯示畫面
+            $('.total_page').text(page.pageTotal);
+            $('.current_page').text(page.currentPage);
+      }
+}
 /*
-  //滑鼠活動連接
-  $(".dev_left").active(function(event){
-        $(this).css('cursor', 'pointer');
-  });
-*/
-  $(".dev_left").click(function(event){
-      pagination(data, prevPage, type);
-      event.stopPropagation();
-      //alert("The paragraph was clicked.");
-  });
-  let afterPage = 1;
-  if(currentPage == pageTotal){
-       afterPage = currentPage;
-  }
-  else{
-       afterPage = currentPage +1;
-  }
-
-  //滑鼠位於其上的連接
-  $(".dev_right").hover(function(){
-     $(this).css('cursor', 'pointer');
-  }, function() {
-     $(this).css("cursor", "default");
-  });
-
-  $(".dev_right").click(function(event){
-      pagination(data, afterPage, type);
-      event.stopPropagation();
-      //alert("The paragraph was clicked.");
-  });
-
-  // 先建立新陣列
-  const obj = new Array();
-  // 使用 ES6 forEach 做資料處理
-  // 這邊必須使用索引來判斷資料位子，所以要使用 index
-  data.forEach((item, index) => {
-    // 獲取陣列索引，但因為索引是從 0 開始所以要 +1。
-    const num = index + 1;
-    // 這邊判斷式會稍微複雜一點
-    // 當 num 比 minData 大且又小於 maxData 就push進去新陣列。
-    if(num >= minData && num <= maxData){
-        obj.push(item);
-    }
-  });
-  //console.log(obj);      //顯示每頁結果
-  // 用物件方式來傳遞資料
-  const page = {
-    pageTotal,
-    currentPage,
-    hasPage: currentPage > 1,
-    hasNext: currentPage < pageTotal,
-    //sorted,
-  };
-  //console.log(page);
-  //顯示畫面
-  if(type == 'dashboard'){
-     displayData(obj);
-  }
-  else if(type == 'device'){
-     let group =callWebAPI('/group', 'get', 'None'); //取出群組列表
-     let equipment =callWebAPI('/equipmentcode', 'get', 'None'); //取出設備列表
-     let zone =callWebAPI('/zone', 'get', 'None'); //取出Zone列表
-     //console.log(zone);
-     showDeviceListTable(obj, group, equipment, zone);
-     $('.total_page').text(pageTotal);
-     $('.current_page').text(currentPage);
-     //displayData1(obj);
-  }
-  else if(type == 'equipment'){
-        //console.log(obj);
-        //obj = obj.sort(function (a, b) { return a.Index < b.Index ? 1 : -1; });  //由高到低排序
-      showEquipmentListTable(obj); //顯示畫面
-       $('.total_page').text(pageTotal);
-       $('.current_page').text(currentPage);
-  }
-  else if(type == 'zone' || type == 'group'){
-        //console.log(obj);
-        showZoneListTable(obj, type); //顯示畫面
-        $('.total_page').text(pageTotal);
-        $('.current_page').text(currentPage);
-  }
-  else if(type == 'account'){
-        //console.log(obj);
-        showAccountListTable(obj); //顯示畫面
-        $('.total_page').text(pageTotal);
-        $('.current_page').text(currentPage);
-  }
-  else if(type == 'log'){
-        //console.log(obj);
-        showLogListTable(obj); //顯示畫面
-        $('.total_page').text(pageTotal);
-        $('.current_page').text(currentPage);
-  }
-  /*
-  obj.forEach(function(value, key, array){
-        console.log(value);
-  });
-  */
-}
-
-
-
-//製作分頁
-function pagination1(type){
+function switchPage(e){
+  e.preventDefault();
+  if(e.target.nodeName !== 'A') return;
+  const page = e.target.dataset.page;
+  console.log(page);
   console.log(data['dataset']);
-  console.log(nowPage);
-
-
-  let leftbtn = document.getElementById("dev_left");
-  let rightbtn = document.getElementById("dev_right");
-  // 取得資料長度
-  let dataTotal = data.length;
-  // 要顯示在畫面上的資料數量，預設每一頁只顯示四筆資料。
-  let perpage = 0;
-  if(type == 'dashboard'){
-    perpage = 30;
-  }
-  else if(type == 'device'){
-    perpage = 10;
-  }
-  else if(type == 'equipment'){
-    perpage = 10;
-  }
-  else if(type == 'zone' || type == 'group'){
-    perpage = 10;
-  }
-  else if(type == 'account'){
-    perpage = 10;
-  }
-  else if(type == 'log'){
-    perpage = 10;
-  }
-  // page 按鈕總數量公式 總資料數量 / 每一頁要顯示的資料
-  // 這邊要注意，因為有可能會出現餘數，所以要無條件進位。
-  let pageTotal = Math.ceil(dataTotal / perpage);
-  // 當前頁數
-  let currentPage = nowPage;
-  tempPage = currentPage;
-  //nowPage = currentPage;
-  // 當”當前頁數”比”總頁數”大的時候，”當前頁數”就等於”總頁數”
-  if (currentPage > pageTotal) {
-    currentPage = pageTotal;
-  }
-  const minData = (currentPage * perpage)-perpage+1;   //最小值筆數  當前頁面去乘每一頁顯示得數量再減去每一頁顯示得數量，此時會得到 5 這個數字，但是我們是第 6 筆開始，所以要在 +1
-  const maxData = (currentPage * perpage);             //最大值筆數
-  // 資料切換
-  let prevPage = 1;
-  if(currentPage > 1){
-       prevPage = currentPage -1;
-  }
-  else{
-       prevPage = 1;
-  }
-  //滑鼠位於其上的連接
-  $(".dev_left").hover(function(){
-     $(this).css('cursor', 'pointer');
-  }, function() {
-     $(this).css("cursor", "default");
-  });
-
-  $(".dev_left").click(function(event){
-      pagination(data, prevPage, type);
-      event.stopPropagation();
-      //alert("The paragraph was clicked.");
-  });
-  let afterPage = 1;
-  if(currentPage == pageTotal){
-       afterPage = currentPage;
-  }
-  else{
-       afterPage = currentPage +1;
-  }
-
-  //滑鼠位於其上的連接
-  $(".dev_right").hover(function(){
-     $(this).css('cursor', 'pointer');
-  }, function() {
-     $(this).css("cursor", "default");
-  });
-
-  $(".dev_right").click(function(event){
-      pagination(data, afterPage, type);
-      event.stopPropagation();
-      //alert("The paragraph was clicked.");
-  });
-
-  // 先建立新陣列
-  let obj = new Array();
-  // 使用 ES6 forEach 做資料處理
-  // 這邊必須使用索引來判斷資料位子，所以要使用 index
-  data['dataset'].forEach((item, index) => {
-    // 獲取陣列索引，但因為索引是從 0 開始所以要 +1。
-    const num = index + 1;
-    // 這邊判斷式會稍微複雜一點
-    // 當 num 比 minData 大且又小於 maxData 就push進去新陣列。
-    if(num >= minData && num <= maxData){
-        obj.push(item);
-    }
-  });
-  console.log(obj);      //顯示每頁結果
-  // 用物件方式來傳遞資料
-  const page = {
-    pageTotal,
-    currentPage,
-    hasPage: currentPage > 1,
-    hasNext: currentPage < pageTotal,
-    //sorted,
-  };
+  pagination(data['dataset'], page);
 }
+*/
 
+//顯示分頁按鈕
+function pageBtn(page, type){
+    let str ='';
+    const total = page.pageTotal;
+    //console.log(page);
+    if(page.hasPage) {
+        $('.dev_left').show();
+        //滑鼠位於其上的連接
+        $(".dev_left").hover(function(){
+           $(this).css('cursor', 'pointer');
+        }, function() {
+           $(this).css("cursor", "default");
+        });
 
+        //滑鼠活動連接
+        $(document).off('click', ".dev_left").on("click", ".dev_left", function(){
+            pagination(page.jsonData, (page.currentPage-1), type);
+        });
+        /*
+        $(".dev_left").click(function(event){
+           event.preventDefault();
+           pagination(page.jsonData, (page.currentPage-1), type);
+           //event.stopPropagation();
+        });*/
+    }
+    else{
+        $('.dev_left').hide();
+    }
+
+    if(page.hasNext) {
+      $('.dev_right').show();
+      //滑鼠位於其上的連接
+      $(".dev_right").hover(function(){
+         $(this).css('cursor', 'pointer');
+      }, function() {
+         $(this).css("cursor", "default");
+      });
+        $(document).off('click', ".dev_right").on("click", ".dev_right", function(){
+            pagination(page.jsonData, (page.currentPage+1), type);
+        });
+    /*
+      $(".dev_right").click(function(event){
+          event.preventDefault();
+          pagination(page.jsonData, (page.currentPage+1), type);
+          //event.stopPropagation();
+      });
+      */
+    }
+    else{
+      $('.dev_right').hide();
+    }
+}
 
 
 //製作分頁區域
@@ -3180,32 +3185,59 @@ function paginationZone(data, nowPageZone, type){
   // 資料切換
   let prevPage =1;
   if(currentPage > 1){
+       $(".zone_left").show();
        prevPage = currentPage -1;
   }
   else{
+       $(".zone_left").hide();
        prevPage = 1;
   }
 
+  //滑鼠位於其上的連接
+  $(".zone_left").hover(function(){
+      $(this).css('cursor', 'pointer');
+  }, function() {
+      $(this).css("cursor", "default");
+  });
+
+  //滑鼠活動連接
+  $(document).off('click', ".zone_left").on("click", ".zone_left", function(){
+       paginationZone(data, prevPage, type);
+  });
+  /*
   $(".zone_left").click(function(event){
       paginationZone(data, prevPage, type);
-      event.stopPropagation();
+      //event.stopPropagation();
       //alert("The paragraph was clicked.");
   });
+  */
 
   let afterPage =1;
   if(currentPage == pageTotal){
+       $(".zone_right").hide();
        afterPage = currentPage;
   }
   else{
+       $(".zone_right").show();
        afterPage = currentPage +1;
   }
-
+  //滑鼠位於其上的連接
+  $(".zone_right").hover(function(){
+      $(this).css('cursor', 'pointer');
+  }, function() {
+      $(this).css("cursor", "default");
+  });
+  //滑鼠活動連接
+  $(document).off('click', ".zone_right").on("click", ".zone_right", function(){
+       paginationZone(data, afterPage, type);
+  });
+  /*
   $(".zone_right").click(function(event){
       paginationZone(data, afterPage, type);
-      event.stopPropagation();
+      //event.stopPropagation();
       //alert("The paragraph was clicked.");
   });
-
+  */
   // 先建立新陣列
   const obj = new Array();
   // 使用 ES6 forEach 做資料處理
@@ -3250,22 +3282,6 @@ function switchPage(e, page){
 function displayData(obj){
      //console.log(obj.length);
      let str ='';
-     /*
-     let i =0;
-     obj.forEach((item) => {
-        //console.log(item);
-        //console.log(i);
-        let Remainder  = i % col;
-        if(Remainder == 0){
-            str += "<tr>";
-        }
-        str += showDevice1(item);
-        if((i+1) % col == 0){
-          str += "</tr>";
-        }
-        i++;
-     });
-     */
      //if(obj.length < 30){ console.log('ok'); }
      for(var i=0; i<30; i++){
         //console.log(obj[j]);
@@ -3293,6 +3309,8 @@ function displayData(obj){
 //顯示區域
 function displayZoneData(obj, type){
      let str ='';
+     //console.log(zonedata);
+     /*
      let i =0;
      //console.log(zonecol);
      obj.forEach((item) => {
@@ -3310,6 +3328,23 @@ function displayZoneData(obj, type){
 
         i++;
      });
+     */
+     for(var i=0; i<6; i++){
+            //console.log(obj[i]);
+            let Remainder  = i % zonecol;
+            if(Remainder == 0){
+                str += "<tr>";
+            }
+            //if(obj[i] != undefined){
+            str += showZone1(obj[i], i, type);
+           /* }
+            else{
+                str += showZone2(obj[i], i);
+            }*/
+            if((i+1) % zonecol == 0){
+              str += "</tr>";
+            }
+     }
      //console.log(str);
      $('.zone').html(str);
 }
@@ -3452,6 +3487,36 @@ function switchZone(category){
     }
 }
 
+
+function switchZone1(category){
+    //console.log(category);
+    let imageList = ['/static/images/8.Zone/normal_Science-Building-230x230.png', '/static/images/8.Zone/normal_Medical-Building-230x230.png', '/static/images/8.Zone/normal_Science-Building-230x230.png', '/static/images/8.Zone/normal_Medical-Building-230x230.png', '/static/images/8.Zone/normal_Liberal-Arts-230x230.png', '/static/images/8.Zone/normal_Mechatronics-230x230.png'];
+    let clickimageList = ['/static/images/8.Zone/press_Science-Building-230x230.png', '/static/images/8.Zone/press_Medical-Building-230x230.png', '/static/images/8.Zone/press_Science-Building-230x230.png', '/static/images/8.Zone/press_Medical-Building-230x230.png', '/static/images/8.Zone/press_Liberal-Arts-230x230.png', '/static/images/8.Zone/press_Mechatronics-230x230.png'];
+    /* console.log($('.image0').attr('src'));
+    console.log($('.image1').attr('src'));
+    console.log($('.image2').attr('src'));
+    console.log($('.image3').attr('src'));
+    console.log($('.image4').attr('src'));
+    console.log($('.image5').attr('src')); */
+    for(var i=0; i<6; i++){
+        //console.log(i);
+        if(i == category){
+            $('.image'+i).attr('src', clickimageList[i]);
+            $(".text"+i).addClass("text-white");
+        }
+        else if($('.image'+i).attr('src').indexOf("Empty") != -1){
+            $('.image'+i).attr('src', '/static/images/8.Zone/Empty-230x230.png');
+            /* $('.image'+i).attr('src', imageList[i]);
+            $(".text"+i).removeClass("text-white"); */
+        }
+        else{
+            $('.image'+i).attr('src', imageList[i]);
+            $(".text"+i).removeClass("text-white");
+        }
+    }
+}
+
+
 //URL切換 - Dashboard
 function redirectURL(id, type, i){
     if(type == 'dashboard'){
@@ -3460,7 +3525,7 @@ function redirectURL(id, type, i){
         zone_id = id;
         initDatatPromse3(id, 'dashboard') //全域變數Data
         .then(function(obj_data) {
-            //console.log(obj_data);
+            console.log(obj_data);
             //顯示畫面
             pagination(obj_data['dataset'], nowPage, 'dashboard');
         })
@@ -3502,11 +3567,62 @@ function redirectURL(id, type, i){
     }
 }
 
+function redirectURL1(string_json){
+    //console.log(string_json);
+    if(string_json['type'] == 'dashboard'){
+        //location.href='/dashboard1/'+string_json['index'];
+        //console.log(string_json['index']);
+        zone_id = string_json['index'];
+        initDatatPromse3(zone_id, 'dashboard') //全域變數Data
+        .then(function(obj_data) {
+            //console.log(obj_data);
+            //顯示畫面
+            pagination(obj_data['dataset'], nowPage, 'dashboard');
+        })
+        .then(function() {
+            switchZone1(string_json['i']);
+        });
+    }else if(string_json['type'] == 'device'){
+        //location.href='/register/device1/'+string_json['index'];
+        //查詢裝置清單
+        //console.log(string_json['index']);
+        initDatatPromse3(string_json['index'], 'device')
+        .then(function(obj_data) {
+            //console.log(obj_data);
+            //顯示畫面
+            pagination(obj_data['dataset'], nowPage, 'device');
+        })
+        .then(function() {
+            switchZone1(string_json['i']);
+        });
+    }else if(string_json['type'] == 'analysis'){
+        //console.log(zone_id);
+        //let group_id = $('.group-dev').val();
+        //location.href='/analysis/'+id+'/'+group_id;
+        //查詢裝置清單
+        //getAnalysisDataPromse(string_json['index'], 0, today, get_first_last[0], today)
+        getAnalysisZoneDataPromse(string_json['index'], today, get_first_last[0], today, 'zone')
+        .then(function(obj_data) {
+            console.log(obj_data);
+            //顯示畫面
+            showDataChart(obj_data, days);
+        })
+        .then(function() {
+            //console.log(id);
+            //$('.group-dev').val(0); //預設選項
+            //$('#zoneId').val(id);       //設定Zone區選項
+            zone_id =string_json['index']
+            switchZone1(string_json['i']);
+        });
+    }
+}
+
+
 //選擇群組
 function selectGroup(type){
    let group_type = $('.group-dev').val();
    //console.log('group_id:'+group_type);
-   //console.log(data['dataset']);
+   //console.log(data);
 
    let filterData = [];
    if(group_type == 'non'){
@@ -3518,7 +3634,7 @@ function selectGroup(type){
             return item.group_id == group_type;       // 取得大於五歲的
         });
    }
-   console.log(filterData);
+   //console.log(filterData);
    if(type == 'dashboard'){
      //console.log(filterData);
      //displayData(filterData);
@@ -4351,7 +4467,11 @@ function processfile(file){
 
 //監聽伺服器網路
 function listenOnline(){
-    let url = '/login';
+    let utctimestamp = new Date().getTime(); //豪秒
+    //console.log(utctimestamp);
+    utctimestamp = utctimestamp/1000;
+    //console.log(utctimestamp);
+    let url = '/getnowtime/'+utctimestamp;
 
      $.ajax({
             //url: '/api/sensor/?device='+device,
@@ -4362,12 +4482,21 @@ function listenOnline(){
             //data: JSON.stringify(param),
             //contentType: "application/json",
             success: function (response, status, xhr) {
+                //console.log(response);
+                $('.styletype').text(response['nowTime']);
                 //console.log(xhr['readyState']);
                 //console.log(xhr.status);  //網路連線狀態
                 if(xhr.status == 200){
                     $('.div_right_bottom').hide();
                 }
-                data = response;
+                //檢查時間
+                if(response['timeStatus'] == 'ok'){
+                    $('.div_dateset').hide();
+                }
+                else{
+                    $('.div_dateset').show();
+                }
+                //data = response;
             },
             complete: function() {
                 //console.log('finish')

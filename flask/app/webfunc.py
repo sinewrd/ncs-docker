@@ -67,14 +67,18 @@ def getRawData(json_data):
 
     mycol = mydb["power_meter"]
 
-    nowDateTime = datetime.datetime.now()
-    nowdatetime = nowDateTime.timestamp()  # 現在時間戳記
-    print(nowdatetime)
+    end_object = datetime.datetime.strptime(request_data['end'], "%Y-%m-%d %H:%M:%S")
+    end_timestamp = datetime.datetime.timestamp(end_object)
+    #nowDateTime = datetime.datetime.now()
+    #nowdatetime = nowDateTime.timestamp()  # 現在時間戳記
+    #print(nowdatetime)
     # now = datetime.now()
-    prevhours = nowDateTime - timedelta(hours=1)  # 1變數
-    print(prevhours.timestamp())
+    start_object = datetime.datetime.strptime(request_data['start'], "%Y-%m-%d %H:%M:%S")
+    start_timestamp = datetime.datetime.timestamp(start_object)
+    #prevhours = nowDateTime - timedelta(hours=1)  # 1變數
+    #print(prevhours.timestamp())
 
-    myquery = {"id": request_data['id'], "datetime": {"$lte": nowdatetime, "$gte": prevhours.timestamp()}}
+    myquery = {"id": request_data['id'], "datetime": {"$lte": end_timestamp, "$gte": start_timestamp}}
     mydoc = mycol.find(myquery)
     Data = []
     for x in mydoc:
@@ -437,6 +441,7 @@ def updateEquipment(json_data, index):
 # 2023.10.02 修改
 # 2023.11.01 新增。輸出裝置管理統計
 # 2023.12.07/08 修改訊息
+# 2024.01.26 修改訊息 is updated。
 def setDeviceBind(json_data):
     # request_data = json.loads(json_data)
     request_data = json_data
@@ -469,7 +474,8 @@ def setDeviceBind(json_data):
                 msg = request_data['id'] + " is paired with " + Equipment['dataset'][0]['brand'] + " " + \
                       Equipment['dataset'][0]['model']
             else:
-                msg = request_data['id'] + " is updated。"
+                dev_name = getDeviceInfo(request_data['id'], 'name')
+                msg = request_data['id'] + " " + dev_name + " is updated。"
             # msg = "(" + request_data['id'] + ") The Device Updated Completed。"
         payload = {
             "role": "user",
@@ -1376,7 +1382,7 @@ def queryGroupDevice2(gid, type):
                    "close": statistics['closecount'],
                    "conn": statistics['conncount'],
                    "standby": statistics['closecount'],
-                   'nowTime': LocalTime,
+                   #'nowTime': LocalTime,
                    # "standby": int(statistics['opencount'])+int(statistics['closecount']),
                    "disconn": statistics['disconncount']}
     else:
@@ -1530,6 +1536,7 @@ def mainCalculate(list_data, first, last, today):
 # 統計總量 - 以Zone區來計算
 # 2024.01.04 新增
 # 2024.01.11 新增所有群組的統計。前端下拉選項"All"選項
+# 2024.01.27 修改所有群組的統計。前端下拉選項"All"選項
 def mainCalculateGroup(id, first, last, today, type):
     total_addwh = 0
     total_usage = 0
@@ -1563,12 +1570,12 @@ def mainCalculateGroup(id, first, last, today, type):
     mydoc1 = mycol.find(myquery1)
     count1 = mycol.count_documents(myquery1)
     if count1 != 0:
-        mydoc1 = mycol.find_one(myquery1)
-        today_usage = mydoc1['usage']
-        today_addwh = mydoc1['addwh']
-        #df1 = pd.DataFrame(list(mydoc1))
-        #today_usage = sum(list(df1['usage']))
-        #today_addwh = sum(list(df['addwh']))
+        #mydoc1 = mycol.find_one(myquery1)
+        #today_usage = mydoc1['usage']
+        #today_addwh = mydoc1['addwh']
+        df1 = pd.DataFrame(list(mydoc1))
+        today_usage = sum(list(df1['usage']))
+        today_addwh = sum(list(df1['addwh']))
 
     return [total_addwh, total_usage, today_addwh, today_usage]
 
@@ -1576,6 +1583,7 @@ def mainCalculateGroup(id, first, last, today, type):
 
 # 統計總量 - 以Zone區來計算
 # 2024.01.04 新增
+# 2024.01.27 修改
 def mainCalculateAll(first, last, today):
     total_addwh = 0
     total_usage = 0
@@ -1599,7 +1607,7 @@ def mainCalculateAll(first, last, today):
         mydoc1 = mycol.find(myquery1)
         df1 = pd.DataFrame(list(mydoc1))
         today_usage = sum(list(df1['usage']))
-        today_addwh = sum(list(df['addwh']))
+        today_addwh = sum(list(df1['addwh']))
 
     return [total_addwh, total_usage, today_addwh, today_usage]
 
