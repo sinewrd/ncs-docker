@@ -5,10 +5,10 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 #from flask_cors import CORS
 #from flasgger import Swagger, swag_from
 from devicefunc import processDeviceCMD, process, getStatistics
-from webfunc import setControlCode, setDeviceBind, execCommand, deleteEquipment, updateEquipment, deleteDeviceReg, updateDeviceReg, queryEquipment, queryDevice, getRawData, SatisticsUsage, statisticsDevice, statisticsDevice1, statisticsDevice2, getGroupList, queryGroupDevice, queryGroupDevice1, getZoneList, statisticsEquipment, createZone, updateZone, deleteZone, createGroup, updateGroup, deleteGroup, statisticsGroup, getAccountList, createAccount, updateAccount, deleteAccount, vaildAccount, queryLogRecord, vaildUsername, recordLog, getAnalysisData, queryLogRecord1, filterhLog, getFilterLogData, getFilterAccountData, getFilterZoneData, getFilterGroupData, getFilterEquipmentData, getFilterDeviceData, baseConfigSetData, getBaseConfig, getGroupIDList, queryEquipmentList, getZoneIDList, queryGroupDevice2, queryGroupDeviceTest, getRawDataTest
+from webfunc import setControlCode, setDeviceBind, execCommand, deleteEquipment, updateEquipment, deleteDeviceReg, updateDeviceReg, queryEquipment, queryDevice, getRawData, SatisticsUsage, statisticsDevice, statisticsDevice1, statisticsDevice2, getGroupList, queryGroupDevice, queryGroupDevice1, getZoneList, statisticsEquipment, createZone, updateZone, deleteZone, createGroup, updateGroup, deleteGroup, statisticsGroup, getAccountList, createAccount, updateAccount, deleteAccount, vaildAccount, queryLogRecord, vaildUsername, recordLog, getAnalysisData, queryLogRecord1, filterhLog, getFilterLogData, getFilterAccountData, getFilterZoneData, getFilterGroupData, getFilterEquipmentData, getFilterDeviceData, baseConfigSetData, getBaseConfig, getGroupIDList, queryEquipmentList, getZoneIDList, queryGroupDevice2, sendSendTime, getSysTimeZoneList, getSystemSetTime, queryGroupDeviceTest, getRawDataTest
 
 import os, datetime, time
-import requests, json, pymongo
+import requests, json, pymongo, socket
 #import pandas as pd
 #import numpy as np
 
@@ -1097,6 +1097,42 @@ def getSystemDateTime(float_params):
                 }
 
     return jsonify(datatime)
+
+
+
+# 設定主機系統時間
+# 2024.02.05 新增
+@app.route('/setime', methods=['POST'])
+def setHostTime():
+    if request.is_json:
+        request_data = request.get_json()
+        # response_data = setControlCode(json.dumps(request_data))
+        # response_data = setControlCode(request_data)
+        response_data = sendSendTime(request_data)
+
+        return jsonify(response_data)
+    else:
+        return jsonify({"status": "error", "commit": "The Data dosen't created Fail"})
+
+
+# 取出 TimeZone List
+# 2024.02.06 新增
+@app.route('/timezone', methods=['GET'])
+def getTimeZoneList():
+    response_data = getSysTimeZoneList()
+
+    return jsonify(response_data)
+
+
+
+# 取出 System Time
+# 2024.02.06 新增
+@app.route('/getsystime', methods=['GET'])
+def getSystemTime():
+    response_data = getSystemSetTime()
+
+    return jsonify(response_data)
+
 
 
 if __name__ == '__main__':

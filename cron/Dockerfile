@@ -2,7 +2,9 @@ FROM python:3.8
 
 RUN apt-get update && \
     apt-get install -y cron && \
-    apt-get install -y nano
+    apt-get install -y nano && \
+    apt-get install -y net-tools && \
+    apt-get install -y iproute2
 
 WORKDIR /cron
 

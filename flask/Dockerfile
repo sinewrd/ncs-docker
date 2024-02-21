@@ -3,9 +3,11 @@ FROM python:3.8
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install -y nano
+    apt-get install -y nano && \
+    apt-get install -y net-tools && \
+    apt-get install -y iproute2
 
-ENV TZ=Asia/Taipei
+#ENV TZ=Asia/Taipei
 
 #RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 

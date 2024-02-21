@@ -68,6 +68,20 @@
     <!-- Content Wrapper -->
     <!--<div id="content-wrapper" class="d-flex flex-column">-->
     <div id="content-wrapper">
+      <!-- Nav Item - Alerts -->
+        <div class="alert alert-danger div_right_bottom" role="alert" style="display:none">
+          <!--This is a danger alert—check it out!-->The Network is offline
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!-- Nav Item - Datetime Alerts -->
+        <div class="alert alert-danger div_dateset" role="alert" style="display:none">
+          <!--This is a danger alert—check it out!-->Please enter the system to adjust the time。
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
       <!-- Main Content -->
       <div id="content">
 
@@ -112,7 +126,7 @@
               <div class="row justify-content-between">
                   <div class="row">
                       <form class="form-inline pl-4">
-                          <label class="my-1" for="username">Name</label>
+                          <label class="my-1" for="username">User</label>
                           <input type='text' class='form-control mx-3' id="username">
                           <label class="my-1" for="startdate">Date</label>
                           <input type='date' class='form-control mx-3' id="startdate">
@@ -207,7 +221,7 @@
             <div class="p-2 statistics-dev"><a href="/log" class="homeicon"><span class="pt-5 pl-3"><i class="fa fa-home" aria-hidden="true" style="font-size: 1.2rem;"></i></span></a></div>
             <!--<div class="p-2 statistics-dev">Total: <span class="total">{{data['total']}}</span>, Total Page: <span class="total_page"></span>, Current Page: <span class="current_page"></span></div>-->
             <!--<div class="p-2 bg-warning">Flex item 2</div>-->
-            <div class="p-2">
+            <div class="p-2" id="control_btn" style="border:#000000 0px solid;">
                 <img src="{{url_for('static', filename='images/10.Other/normal_L-32x32.png')}}" width="25" class="dev_left">
                 <img src="{{url_for('static', filename='images/10.Other/normal_R-32x32.png')}}" width="25" class="dev_right">
             </div>
@@ -352,11 +366,14 @@ var col = 6;  //一列個數
 var zonecol = 2;  //一列個數
 var nowPageZone =2;
 */
-var data;        //Device 裝置資訊
+var data;          //Device 裝置資訊
 var total_zone =0; //初始總數
-var nowPage = 1;
-//var searchPage = 1; //搜尋頁數
+var nowPage = 1;   //目前頁數
+
 var account = '';
+//var btn_left = document.getElementsByClassName("dev_left");   //左邊按鈕
+//var btn_right = document.getElementsByClassName("dev_right"); //右邊按鈕
+//var pageid = document.getElementById("control_btn");
 let todate = getTodayDate(); //今日日期
 
 window.onload = function (){
@@ -366,26 +383,19 @@ window.onload = function (){
     //查詢Account清單
     initDatatPromse4('log')
     .then(function(obj_data) {
-        //console.log(obj_data);
+        //console.log(data);
         //obj_data = obj_data['group'].sort(function (a, b) { return a.Index < b.Index ? 1 : -1; });  //由高到低排序
         //console.log(obj_data);
         //顯示畫面
-        pagination(obj_data['dataset'], nowPage, 'log');
+        //pagination1('log');
+        pagination(data['dataset'], nowPage, 'log');
     });
-/*
-    //區域分頁
-    initZoneData(0)
-    .then(function(obj_data) {
-        console.log(nowPageZone);
-        //顯示畫面
-        paginationZone(obj_data['group'], nowPageZone, 'device');
-    })
-    .then(function() {
-        //console.log(zone_id);
-        switchZone(zone_id);
-    });
-    */
+    //pageid.addEventListener('click', switchPage);
+
+    //輪詢監聽伺服器
+    const myInterval = setInterval(function() {listenOnline()}, 5000);
 }
+
 </script>
 </body>
 

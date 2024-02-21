@@ -1,0 +1,10 @@
+[Unit]
+Description=Trig API Service
+
+[Service]
+Type=simple
+ExecStart=/home/hou/shell/host_env/bin/python /home/hou/shell/web-api/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

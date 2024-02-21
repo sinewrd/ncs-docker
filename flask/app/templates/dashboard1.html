@@ -73,14 +73,20 @@
     <!-- Content Wrapper -->
     <!--<div id="content-wrapper" class="d-flex flex-column">-->
     <div id="content-wrapper">
-        <!-- Nav Item - Alerts -->
+        <!-- Nav Item - Network break Alerts -->
         <div class="alert alert-danger div_right_bottom" role="alert" style="display:none">
           <!--This is a danger alert—check it out!-->The Network is offline
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-
+        <!-- Nav Item - Datetime Alerts -->
+        <div class="alert alert-danger div_dateset" role="alert" style="display:none">
+          <!--This is a danger alert—check it out!-->Please enter the system to adjust the time。
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
         <!-- Main Content -->
       <div id="content">
 
@@ -355,7 +361,10 @@ window.onload = function (){
 }
 
 //輪詢Dashboard
-const myInterval = setInterval(function() {upddeviceStatus1(zone_id)}, 5000);
+const myInterval = setInterval(function() {
+        upddeviceStatus1(zone_id);
+        listenOnline();
+ }, 5000);
 </script>
 </body>
 

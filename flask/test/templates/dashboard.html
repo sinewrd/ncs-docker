@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>NCS Control Platform</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="{{url_for('static', filename='vendor-content/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <!-- Custom styles for this template-->
+  <link href="{{url_for('static', filename='css/sb-admin-2.min.css')}}" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/ncs.css')}}"> <!-- 自製 -->
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <!--<div class="sidebar-brand-icon rotate-n-15">-->
+        <div class="sidebar-brand-icon">
+          <!--<i class="fas fa-laugh-wink"></i>-->
+          <i class='fas fa-chalkboard-teacher' style='font-size: 2rem;'></i>
+        </div>
+        <div class="sidebar-brand-text mx-3"><!--SB Admin <sup>2</sup>-->NCS Control Platform</div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item active">
+        <!-- <a class="nav-link" href="tables.html">
+          <i class="fab fa-chromecast" style="font-size: 1.2rem;"></i>
+          <span style="font-size: 0.9rem;">Device Management</span>
+        </a> -->
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <i class="fas fa-fw fa-tachometer-alt" style="font-size: 1.2rem;"></i>
+          <!--<span>Components</span>-->
+          <span style="font-size: 0.9rem;">Dashboard</span></a>
+        </a>
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <!--<h6 class="collapse-header">Custom Components:</h6>-->
+            <a class="collapse-item {% if data['group'] == 0 %} active {% endif %}" href="javascript:void(0)" onclick="GroupDashboard(0)"><!--Cards-->All</a>
+            {% for item in data['grouplist'] %}
+            <a class="collapse-item {% if data['group'] == item['g_id'] %} active {% endif %}" href="javascript:void(0)" onclick='GroupDashboard({{item["g_id"]}})'><!--Buttons-->{{ item["name"] }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      </li>
+      <!--<li class="nav-item active">
+        <a class="nav-link" href="index.html">
+          <i class="fas fa-fw fa-tachometer-alt" style="font-size: 1.2rem;"></i>
+          <span style="font-size: 1rem;">Dashboard</span></a>
+      </li>-->
+
+      <!-- Divider -->
+     <!-- <hr class="sidebar-divider"> -->
+
+      <!-- Heading -->
+     <!-- <div class="sidebar-heading">
+        Interface
+      </div>-->
+      <!-- Nav Item - 裝置管理 -->
+      <li class="nav-item">
+        <a class="nav-link" href="index.html">
+          <i class="fab fa-chromecast" style="font-size: 1.2rem;"></i>
+          <span style="font-size: 1rem;">Device Management</span></a>
+      </li>
+
+      <!-- Nav Item - 設備管理 -->
+      <li class="nav-item">
+        <a class="nav-link" href="tables.html">
+          <i class="fas fa-tv" style="font-size: 1rem;"></i>
+          <span style="font-size: 0.9rem;">Equipment Management</span></a>
+      </li>
+
+      <!-- Nav Item - 報表 -->
+      <li class="nav-item">
+        <!-- <a class="nav-link" href="tables.html">
+          <i class="fab fa-chromecast" style="font-size: 1.2rem;"></i>
+          <span style="font-size: 0.9rem;">Device Management</span>
+        </a> -->
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAnalyze" aria-expanded="true" aria-controls="collapseAnalyze">
+          <i class="fas fa-fw fa-tachometer-alt" style="font-size: 1.2rem;"></i>
+          <!--<span>Components</span>-->
+          <span style="font-size: 0.9rem;">Analyze</span></a>
+        </a>
+        <div id="collapseAnalyze" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <!--<h6 class="collapse-header">Custom Components:</h6>-->
+            <a class="collapse-item" href="cards.html"><!--Cards-->All</a>
+            {% for item in data['grouplist'] %}
+            <a class="collapse-item" href="javascript:void(0)"><!--Buttons-->{{ item["name"] }}</a>
+            {% endfor %}
+           <!-- <a class="collapse-item" href="buttons.html"><!--Buttons--><!--Group 1</a>
+            <a class="collapse-item" href="cards.html"><!--Cards--><!--Group 2</a>
+           <!-- <a class="collapse-item" href="cards.html"><!--Cards--><!--Group 3</a> -->
+          </div>
+        </div>
+      </li>
+
+      <!-- Nav Item - 群組管理 -->
+      <li class="nav-item">
+        <a class="nav-link" href="tables.html">
+          <i class="fas fa-object-group" style="font-size: 1.2rem;"></i>
+          <span style="font-size: 1rem;">Group</span></a>
+      </li>
+
+      <!-- Nav Item - 帳號管理 -->
+      <li class="nav-item">
+        <a class="nav-link" href="tables.html">
+          <i class="fas fa-users" style="font-size: 1.2rem;"></i>
+          <span style="font-size: 1rem;">Account</span></a>
+      </li>
+
+      <!-- Nav Item - 系統設定 -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+          <i class="fas fa-cog" style="font-size: 1.2rem;"></i>
+          <!--<span>Components</span>-->
+          <span style="font-size: 1rem;">Setting</span></a>
+        </a>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <!--<h6 class="collapse-header">Custom Components:</h6>-->
+            <a class="collapse-item" href="buttons.html"><!--Buttons-->Network</a>
+            <a class="collapse-item" href="cards.html"><!--Cards-->language</a>
+          </div>
+        </div>
+      </li>
+
+      <!-- Nav Item - LOG -->
+      <li class="nav-item">
+        <a class="nav-link" href="tables.html">
+          <i class="far fa-file-alt" style="font-size: 1.2rem; padding-left: 2px;"></i>
+          <span style="font-size: 1rem;">Log</span></a>
+      </li>
+
+      <!-- Nav Item - Utilities Collapse Menu -->
+     <!-- <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+          <i class="fas fa-fw fa-wrench"></i>
+          <span>Utilities</span>
+        </a>
+        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Custom Utilities:</h6>
+            <a class="collapse-item" href="utilities-color.html">Colors</a>
+            <a class="collapse-item" href="utilities-border.html">Borders</a>
+            <a class="collapse-item" href="utilities-animation.html">Animations</a>
+            <a class="collapse-item" href="utilities-other.html">Other</a>
+          </div>
+        </div>
+      </li> -->
+
+      <!-- Divider -->
+     <!-- <hr class="sidebar-divider"> -->
+
+      <!-- Heading -->
+     <!-- <div class="sidebar-heading">
+        Addons
+      </div> -->
+
+      <!-- Nav Item - Pages Collapse Menu -->
+     <!-- <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+          <i class="fas fa-fw fa-folder"></i>
+          <span>Pages</span>
+        </a>
+        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Login Screens:</h6>
+            <a class="collapse-item" href="login.html">Login</a>
+            <a class="collapse-item" href="register.html">Register</a>
+            <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+            <div class="collapse-divider"></div>
+            <h6 class="collapse-header">Other Pages:</h6>
+            <a class="collapse-item" href="404.html">404 Page</a>
+            <a class="collapse-item" href="blank.html">Blank Page</a>
+          </div>
+        </div>
+      </li>-->
+
+      <!-- Nav Item - Tables -->
+     <!-- <li class="nav-item">
+        <a class="nav-link" href="tables.html">
+          <i class="fas fa-fw fa-table"></i>
+          <span>Tables</span></a>
+      </li> -->
+
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+          <div class="d-flex mb-2">
+                <div class="col-auto mr-auto">
+                  <span class="pt-2">Total: {{data['total']}}, On: {{data['open']}}, Off: {{data['close']}}, On-line: {{data['conn']}}, Off-line: {{data['disconn']}}</span>
+                </div>
+                <div class = "col-auto">
+                    <span style="border-left: 5px solid #99FF99; height: 3rem;"></span>
+                    <span class="pl-2">On</span>
+                </div>
+                <div class = "col-auto">
+                    <span style="border-left: 5px solid #858796; height: 3rem;"></span>
+                    <span class="pl-2">Off</span>
+                </div>
+                <div class = "col-auto">
+                    <span style="border-left: 5px solid #CBCBCC; height: 3rem;"></span>
+                    <span class="pl-2">Off-line</span>
+                </div>
+          </div>
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+            <!-- Nav Item - Alerts -->
+            <li class="nav-item dropdown no-arrow mx-1 my-3">
+                 <!--<div class="pt-4"><i class="far fa-clock pr-2" style="font-size: 1.2rem;"></i> 2023-08-27 17:45:32</div>-->
+                  <button type="button" class="btn btn-primary mr-3" onClick="">On</button>
+                  <button type="button" class="btn btn-secondary" onClick="">Off</button>
+            </li>
+
+            <div class="topbar-divider d-none d-sm-block"></div>
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600"><!--Valerie Luna-->Admin</span>
+                <!--<img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">-->
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-fw mr-2 text-gray-400" style="font-size: 1.2rem;"></i>
+                  <span style="font-size: 1rem;">Profile</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-fw mr-2 text-gray-400" style="font-size: 1.2rem;"></i>
+                  <span style="font-size: 1rem;">Logout</span>
+                </a>
+              </div>
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <div class="showdevlist">
+            <!-- END -->
+          </div>
+          <!-- Content Row -->
+          <div class="row">
+            <div class="col-lg-6 mb-4"></div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2023</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-md-down" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-gradient-primary text-white">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-footer">
+          <button type='button' class='btn btn-primary' onClick="logOut()">Logout</button>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
+          <!--<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a>-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal-->
+  <div class="modal fade" id="showMsg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-gradient-primary text-white">
+          <h5 class="modal-title" id="ModalLabel"><!--Ready to Leave?--></h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body body-content">
+          <!-- 電壓 -->
+          <div class="row">  
+            <div class="col-xs-12 col-md-3">
+              <div class="card mb-2 border-left-primary">
+                <div class="card-body">
+                   <div>Power</div>
+                   <div class="h1">82.6</div>
+                   <div class="text-right" style="font-size: 1rem;">W</div>
+                </div>
+              </div>
+            </div>
+            <!-- 電流 -->
+            <div class="col-xs-12 col-md-3">
+              <div class="card mb-2 border-left-info">
+                <div class="card-body">
+                   <div>Current</div>
+                   <div class="h1">0.4</div>
+                   <div class="text-right" style="font-size: 1rem;">A</div>
+                </div>
+              </div>
+            </div>
+            <!-- 今日用電量 -->
+            <div class="col-xs-12 col-md-3">
+              <div class="card mb-2 border-left-secondary">
+                <div class="card-body">
+                   <div>Today's Electric</div>
+                   <div class="h1">80.5</div>
+                   <div class="text-right" style="font-size: 1rem;">WH</div>
+                </div>
+              </div>
+            </div>
+            <!-- 今日使用時數 -->
+            <div class="col-xs-12 col-md-3">
+              <div class="card mb-2 border-left-dark">
+                <div class="card-body">
+                   <div>Today's Usage</div>
+                   <div class="h1">17.5</div>
+                   <div class="text-right" style="font-size: 1rem;">HR</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 控制項 -->
+          <div class="row"><div class="col-12 mt-2">  
+              <div class="card mb-3">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary"><!--Revenue Sources--><!--Control Panel-->Equipment Control Status：<span class="e-status">ON</span></h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body showcontent"> <!-- 加入有scall bar功能。 addScroll -->
+                    <div class="row">
+                          <div class="col-2 ctrlbtn"><!--<button type="button" class="btn btn-primary">ON</button>--> </div>
+                          <span class="resMsg pt-2"><!--You press OFF--></span>
+                          <!--<div class="col-2"><button type="button" class="btn btn-primary">OFF</button> </div>-->
+                    </div>
+                   <!-- <div class="row">
+                              <div class="col-auto pt-1">
+                                  <!--每日--><!--Equipment Status：Open -->
+                      <!--        </div>
+                    </div>
+                    <hr> -->
+                    <!--<div class="">
+                        <button type="button" class="btn btn-primary">ON</button>
+                        <button type="button" class="btn btn-primary">OFF</button>
+                        <button type="button" class="btn btn-primary">HDMI 1</button>
+                        <button type="button" class="btn btn-primary">HDMI 2</button>
+                        <button type="button" class="btn btn-primary">VGA</button>
+                    </div>
+                    <div class="equal-width-buttons">
+                        <button type="button" class="btn btn-primary">MUTE ON</button>
+                        <button type="button" class="btn btn-primary">MUTE OFF</button>
+                    </div>-->
+                </div>
+              </div>
+          </div></div>
+          <!-- Cart -->
+          <div class="row"><div class="col-12 mt-2">
+            <!-- Area Chart -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Power Consumption Trend</h6>
+                </div>
+                <div class="card-body">
+                  <div class="chart-area">
+                    <canvas id="myAreaChart"></canvas>
+                  </div>
+                  <!--<hr>
+                  Styling for the area chart can be found in the <code>/js/demo/chart-area-demo.js</code> file.-->
+                </div>
+              </div>
+          </div></div>
+            <!--Select "Logout" below if you are ready to end your current session.-->
+        </div>
+        <div class="modal-footer footer-content"></div>
+      </div>
+    </div>
+  </div>
+
+<!-- Bootstrap core JavaScript-->
+<script src="{{url_for('static', filename='vendor-content/jquery/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='vendor-content/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{{url_for('static', filename='vendor-content/jquery-easing/jquery.easing.min.js')}}"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="{{url_for('static', filename='js/sb-admin-2.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/ncs.js')}}"></script>
+
+<!-- Page level plugins -->
+<script src="{{url_for('static', filename='vendor-content/chart.js/Chart.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/demo/chart-area-demo-1.js')}}"></script>
+<!-- Page level custom scripts -->
+<!--<script src="js/demo/chart-area-demo.js"></script>
+<script src="js/demo/chart-pie-demo.js"></script>-->
+<script>
+var group_id ={{data['group']}};  //Group ID
+var data;
+var icon = ["<i class='fas fa-chalkboard' style='font-size: 5rem;'></i>", "<i class='fas fa-chalkboard' style='font-size: 5rem;color: #99FF99;'></i>", "<i class='fas fa-ban' style='font-size: 6rem;color: #CBCBCC;'></i>"];
+//初始數量 - 全域變數
+var col = 10;  //一列個數
+var total =0; //初始總數
+var icon = ["<i class='fas fa-chalkboard' style='font-size: 5rem;'></i>", "<i class='fas fa-chalkboard' style='font-size: 5rem;color: #99FF99;'></i>", "<i class='fas fa-ban' style='font-size: 6rem;color: #CBCBCC;'></i>"];
+
+
+window.onload = function (){
+  //console.log($('.e-status').text());
+  initDatatPromse(group_id)
+  .then(function(obj_data) {
+      //顯示畫面
+      //console.log(obj_data['dataset']);
+      showDeviceList(obj_data['dataset']);
+  })
+  .then(function(){
+      //event 事件
+      console.log(data);
+  });
+
+/*
+  var i=0;
+  var cardItem = document.getElementsByClassName('card');
+  //console.log(cardItem.length);
+  //console.log(typeof cardItem );
+  [].forEach.call(cardItem, function (el) {
+      var idName = el.getAttribute("id"); //取出物件的ID
+      //var element = document.querySelector('#'+idName);
+      //console.log(element);
+      $('#'+idName+' input[type="checkbox"]').click(function(){
+          event.stopPropagation();
+          //console.log('id:'+idName+', Mouse click the card!');
+          //event.preventDefault();
+          //alert ( $("#"+idName+" input[type='checkbox']:checked").length );
+          //alert($('#'+idName+' input[type="checkbox"]').is(':checked'));
+          //核取選單 //defaultCheck
+          if( $('#'+idName+' input[type="checkbox"]').is(':checked') ){
+              $('#'+idName+' input[type="checkbox"]').prop('checked', true); //checked
+          }
+          else{
+              $('#'+idName+' input[type="checkbox"]').prop('checked', false); //checked
+          }
+        
+      });
+
+      cardItem[i].addEventListener('click', function(event) {
+          event.stopPropagation();
+          // 在滑鼠移動時執行的程式碼
+          console.log('id:'+idName+', Mouse click the card!');
+          // $('#'+idName+' .t1').trigger("click");  //trigger 圖片超連結
+          //顯示資訊和控制
+          showDevicePanel(idName);
+          event.preventDefault();
+      });
+
+      i++;
+  });
+*/
+}
+</script>
+</body>
+
+</html>

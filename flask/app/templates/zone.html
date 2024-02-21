@@ -73,6 +73,20 @@
     <!-- Content Wrapper -->
     <!--<div id="content-wrapper" class="d-flex flex-column">-->
     <div id="content-wrapper">
+      <!-- Nav Item - Alerts -->
+        <div class="alert alert-danger div_right_bottom" role="alert" style="display:none">
+          <!--This is a danger alert—check it out!-->The Network is offline
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!-- Nav Item - Datetime Alerts -->
+        <div class="alert alert-danger div_dateset" role="alert" style="display:none">
+          <!--This is a danger alert—check it out!-->Please enter the system to adjust the time。
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
       <!-- Main Content -->
       <div id="content">
 
@@ -342,7 +356,7 @@ window.onload = function (){
     //查詢Zone清單
     initDatatPromse4('zone')
     .then(function(obj_data) {
-        //console.log(obj_data);
+        console.log(obj_data);
         obj_data = obj_data['group'].sort(function (a, b) { return a.Index < b.Index ? 1 : -1; });  //由高到低排序
         //console.log(obj_data);
         //顯示畫面
@@ -362,6 +376,8 @@ window.onload = function (){
     });
     */
 }
+//輪詢監聽伺服器
+const myInterval = setInterval(function() {listenOnline()}, 5000);
 </script>
 </body>
 

@@ -100,7 +100,7 @@ def clearPowerMeter():
     timestamp_specified = datetime.datetime.timestamp(struct_time)
 
     mycollection = mydb["power_meter"] # 數据
-    myquery = {"datetime": {"$lt":timestamp_specified}} ## 條件
+    myquery = {"datetime": {"$lt": timestamp_specified}} ## 條件
     result = mycollection.delete_many(myquery)
     # Log 紀錄
     payload = {

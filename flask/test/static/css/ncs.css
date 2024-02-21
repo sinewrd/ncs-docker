@@ -1,0 +1,27 @@
+/* offline state */
+.dot_off {
+  height: 20px;
+  width: 20px;
+  background-color: #696969;
+  border-radius: 50%;
+  display: inline-block;
+}
+/* online state */
+.dot_on {
+  height: 20px;
+  width: 20px;
+  background-color: #42e360;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Button Group width the same */
+.equal-width-buttons {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.equal-width-buttons .btn {
+  flex: 1;
+  margin: 5px; /* 可选，用于添加按钮之间的间距 */
+}

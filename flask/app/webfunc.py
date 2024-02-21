@@ -2223,3 +2223,41 @@ def deleteAnalysisData(id, type):
     mydoc = mycol.delete_many(myquery)
 
     return {"status": "ok"}
+
+
+
+# 設定 Host 主機時間
+# 2024.02.05 新增
+def sendSendTime(json_data):
+    request_data = json_data
+
+    url = 'http://host.docker.internal:5050/setime'
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    #payload = {'timezone': 'Asia/Taipei', 'syn': 'no', 'datetime': '2024-02-05 13:23:00'}
+    payload = request_data
+
+    response = requests.post(url, headers=headers, json=payload)
+
+    return {"response_code": response.status_code, "response": response.json()}  
+
+
+
+# 取出 Host TimeZone List
+# 2024.02.06 新增
+def getSysTimeZoneList():
+    url = 'http://host.docker.internal:5050/timezonelist'
+    headers = {'user-agent': 'Mozilla/5.0'}
+
+    response = requests.get(url, headers=headers)
+    return {"response_code": response.status_code, "response": response.json()}
+
+
+
+# 取出 現在系統時間
+# 2024.02.06 新增
+def getSystemSetTime():
+    url = 'http://host.docker.internal:5050/getsystemtime'
+    headers = {'user-agent': 'Mozilla/5.0'}
+
+    response = requests.get(url, headers=headers)
+    return {"response_code": response.status_code, "response": response.json()}    
